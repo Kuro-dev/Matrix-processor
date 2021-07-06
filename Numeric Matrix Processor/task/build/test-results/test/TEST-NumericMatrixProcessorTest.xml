@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="NumericMatrixProcessorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-07-06T14:19:01" hostname="LAPTOP-IIRQMNU8" time="0.986">
+  <properties/>
+  <testcase name="start" classname="NumericMatrixProcessorTest" time="0.986"/>
+  <system-out><![CDATA[?[1;31m
+Start test 1?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 1
+your choice: 1(ADD)
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 3 4 55
+> 4 1 1
+> 9 0 0
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 4 9 77
+> 13 22 44
+> 56 57 78
+The result is:
+7.0 13.0 132.0 
+17.0 23.0 45.0 
+65.0 57.0 78.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 2?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 1
+your choice: 1(ADD)
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> -0.3 677.4 435.2 123.33
+> 1.3 141.4 0.11 1411.4
+> 231.33 113.4 99.9 999.9
+> 1002.22 123.44 55.66 13.3
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 43.43 234.22 876.6 13.2
+> -5.5 -0.3 -1.2 10.2
+> -1.0 0.8 0.8 -9.5
+> -45.5 45.5 56.5 13.7
+The result is:
+43.13 911.62 1311.8 136.53 
+-4.2 141.1 -1.0899999999999999 1421.6000000000001 
+230.33 114.2 100.7 990.4 
+956.72 168.94 112.16 27.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 3?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 2
+your choice: 2(MULTIPLY_CONSTANT)
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 11 234 444
+> 456 343 222
+> 997 456 456
+Enter Constant
+> 17
+The result is:
+187.0 3978.0 7548.0 
+7752.0 5831.0 3774.0 
+16949.0 7752.0 7752.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 4?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 2
+your choice: 2(MULTIPLY_CONSTANT)
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 10123 53455 999345 21312
+> 13559 77654 231221 34534
+> 12312 23412 342342 525255
+> 99713 88123 123123 121111
+Enter Constant
+> 111
+The result is:
+1123653.0 5933505.0 1.10927295E8 2365632.0 
+1505049.0 8619594.0 2.5665531E7 3833274.0 
+1366632.0 2598732.0 3.7999962E7 5.8303305E7 
+1.1068143E7 9781653.0 1.3666653E7 1.3443321E7 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 5?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 3
+your choice: 3(MULTIPLY_MATRIX)
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 1 2 2 7
+> 3 3 4 5
+> 5 0 0 1
+> 0 1 0 8
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 9 8 7 13
+> 15 14 0 1
+> 3 7 2 3
+> 0 9 0 35
+The result is:
+45.0 113.0 11.0 266.0 
+84.0 139.0 29.0 229.0 
+45.0 49.0 35.0 100.0 
+15.0 86.0 0.0 281.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 6?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 3
+your choice: 3(MULTIPLY_MATRIX)
+Enter size of Matrix
+> 2 3
+Reading 3x2 matrix
+> 1 0 17
+> 15 19 7
+Enter size of Matrix
+> 3 4
+Reading 4x3 matrix
+> 5 6 78 9
+> 29 31 47 1
+> 14 17 0 3
+The result is:
+243.0 295.0 78.0 60.0 
+724.0 798.0 2063.0 175.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 7?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 3
+your choice: 3(MULTIPLY_MATRIX)
+Enter size of Matrix
+> 3 5
+Reading 5x3 matrix
+> 1 4 5 6 6
+> 7 8 9 0 0
+> 4 1 2 2 2
+Enter size of Matrix
+> 5 2
+Reading 2x5 matrix
+> 4 5
+> 6 1
+> 6 0
+> 0 9
+> 7 7
+The result is:
+100.0 105.0 
+130.0 43.0 
+48.0 53.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 8?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 3
+your choice: 3(MULTIPLY_MATRIX)
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 0.65 0.67 76.4 23.2
+> -0.7 -13.1 -7.2 9.2
+> -0.7 -5.5 -1.5 0.4
+> -1.0 12.6 0.8 -0.4
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> -5.5 -0.3 -1.2 10.2
+> -1.0 0.8 0.8 -9.5
+> -45.5 45.5 56.5 13.7
+> -10.7 11.9 2.2 1.2
+The result is:
+-3728.685 3752.621 4367.396000000001 1074.785 
+246.11 -228.39000000000001 -396.2 29.71 
+73.32 -67.67999999999999 -87.43 25.040000000000003 
+-39.22 42.02 55.6 -119.42 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 9?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 3
+your choice: 3(MULTIPLY_MATRIX)
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 0.65 0.67 76.4 23.2
+> -0.7 -13.1 -7.2 9.2
+> -0.7 -5.5 -1.5 0.4
+> -1.0 12.6 0.8 -0.4
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> -5.5 -0.3 -1.2 10.2
+> -1.0 0.8 0.8 -9.5
+> -45.5 45.5 56.5 13.7
+> -10.7 11.9 2.2 1.2
+The result is:
+-3728.685 3752.621 4367.396000000001 1074.785 
+246.11 -228.39000000000001 -396.2 29.71 
+73.32 -67.67999999999999 -87.43 25.040000000000003 
+-39.22 42.02 55.6 -119.42 
+
+> 3
+your choice: 3(MULTIPLY_MATRIX)
+Enter size of Matrix
+> 3 5
+Reading 5x3 matrix
+> 1 4 5 6 6
+> 7 8 9 0 0
+> 4 1 2 2 2
+Enter size of Matrix
+> 5 2
+Reading 2x5 matrix
+> 4 5
+> 6 1
+> 6 0
+> 0 9
+> 7 7
+The result is:
+100.0 105.0 
+130.0 43.0 
+48.0 53.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 10?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 4
+your choice: 4(TRANSPOSE)
+1. Main diagonal
+2. Side diagonal
+3. Vertical line
+4. Horizontal line
+0. Exit
+> 1
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 1 7 7
+> 6 6 4
+> 4 2 1
+The result is:
+1.0 6.0 4.0 
+7.0 6.0 2.0 
+7.0 4.0 1.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 11?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 4
+your choice: 4(TRANSPOSE)
+1. Main diagonal
+2. Side diagonal
+3. Vertical line
+4. Horizontal line
+0. Exit
+> 1
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 1 7 7
+> 6 6 4
+> 4 5 1
+The result is:
+1.0 6.0 4.0 
+7.0 6.0 5.0 
+7.0 4.0 1.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 12?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 4
+your choice: 4(TRANSPOSE)
+1. Main diagonal
+2. Side diagonal
+3. Vertical line
+4. Horizontal line
+0. Exit
+> 2
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 1 2 4
+> 4 6 6
+> 7 7 1
+The result is:
+1.0 6.0 4.0 
+7.0 6.0 2.0 
+7.0 4.0 1.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 13?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 4
+your choice: 4(TRANSPOSE)
+1. Main diagonal
+2. Side diagonal
+3. Vertical line
+4. Horizontal line
+0. Exit
+> 2
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 1 5 4
+> 4 6 6
+> 7 7 1.0
+The result is:
+1.0 6.0 4.0 
+7.0 6.0 5.0 
+7.0 4.0 1.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 14?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 4
+your choice: 4(TRANSPOSE)
+1. Main diagonal
+2. Side diagonal
+3. Vertical line
+4. Horizontal line
+0. Exit
+> 3
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 6 5 4 2
+> 8 7 6 6
+> 1 0 0 5.0
+> 9 2 8 8
+The result is:
+2.0 4.0 5.0 6.0 
+6.0 6.0 7.0 8.0 
+5.0 0.0 0.0 1.0 
+8.0 8.0 2.0 9.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 15?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 4
+your choice: 4(TRANSPOSE)
+1. Main diagonal
+2. Side diagonal
+3. Vertical line
+4. Horizontal line
+0. Exit
+> 4
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 8 8 2 9
+> 5 0 0 1
+> 6 6 7 8.0
+> 2 4 5 6
+The result is:
+2.0 4.0 5.0 6.0 
+6.0 6.0 7.0 8.0 
+5.0 0.0 0.0 1.0 
+8.0 8.0 2.0 9.0 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 16?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 5
+your choice: 5(DETERMINANT)
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 1 2 3
+> 4 5 7
+> 10 22 23
+31.0
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 17?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 5
+your choice: 5(DETERMINANT)
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 2.65 3.54 3.88 8.99
+> 3.12 5.45 7.77 5.56
+> 5.31 2.23 2.33 9.81
+> 1.67 1.67 1.01 9.99
+45.21972711999976
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 18?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 6
+your choice: 6(INVERSE_MATRIX)
+Enter size of Matrix
+> 3 3
+Reading 3x3 matrix
+> 0.396796 -0.214938 0.276735
+> 5.19655 -2.06983 -0.388886
+> -3.3797 1.50219 0.159794
+1.147 2.037 2.971 
+2.191 4.521 7.208 
+3.670 0.590 1.338 
+
+> 0
+your choice: 0(EXIT)
+?[1;31m
+Start test 19?[0m
+Available options:
+0. exit
+1. add
+2. multiply constant
+3. multiply matrix
+4. transpose
+5. determinant
+6. inverse matrix
+
+> 6
+your choice: 6(INVERSE_MATRIX)
+Enter size of Matrix
+> 4 4
+Reading 4x4 matrix
+> 2.65 3.54 3.88 8.99
+> 3.12 5.45 7.77 5.56
+> 5.31 2.23 2.33 9.81
+> 1.67 1.67 1.01 9.99
+0.397 -0.215 0.277 -0.509 
+5.197 -2.070 -0.389 -3.143 
+-3.380 1.502 0.160 2.048 
+-0.593 0.230 0.003 0.503 
+
+> 0
+your choice: 0(EXIT)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
