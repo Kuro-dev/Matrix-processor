@@ -52,7 +52,7 @@ public class Main {
     private static void inverseMatrix(Scanner in) {
         Matrix a = readMatrix(in);
         Matrix b = a.inverse();
-        if (b == Matrix.ERROR) {
+        if (b.isError()) {
             System.out.println("This matrix doesn't have an inverse.");
         } else {
             System.out.println(b.toString(3));
@@ -94,7 +94,7 @@ public class Main {
         double factor = scanner.nextInt();
         Matrix result = a.multiply(factor);
         System.out.println(RESULT_STRING);
-        if (result != Matrix.ERROR)
+        if (!result.isError())
             System.out.println(result);
         else
             System.out.println("ERROR");
@@ -105,7 +105,7 @@ public class Main {
         Matrix b = readMatrix(scanner);
         Matrix c = a.add(b);
         System.out.println(RESULT_STRING);
-        if (c != Matrix.ERROR)
+        if (!c.isError())
             System.out.println(c);
         else
             System.out.println("ERROR");

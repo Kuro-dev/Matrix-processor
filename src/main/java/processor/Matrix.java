@@ -1,16 +1,15 @@
 package processor;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Matrix {
-    public static final Matrix ERROR = new Matrix(0, 0) {
-        @Override
-        public String toString() {
-            return "ERROR";
-        }
-    };
+public class Matrix implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 3945716045575686061L;
+
     private final int width;
     private final int height;
     private final double[][] matrix;
@@ -20,10 +19,34 @@ public class Matrix {
         this(width, height, new double[height][width]);
     }
 
-    public Matrix(int width, int height, double[][] matrix) {
+    private Matrix(int width, int height, double[][] matrix) {
         this.width = width;
         this.height = height;
         this.matrix = matrix;
+    }
+
+    /**
+     * @param data the two-dimensional matrix.
+     * @return a matrix filled with the given data.
+     * @throws IllegalArgumentException if the data is empty or the length if the rows differs
+     */
+    public static Matrix of(double[][] data) throws IllegalArgumentException {
+        int height = data.length;
+        if (height > 0) {
+            int width = data[0].length;
+            for (double[] datum : data) {
+                if (datum.length == width) {
+                    return new Matrix(width, height, data);
+                } else {
+                    throw new IllegalArgumentException("All rows must have the same length");
+                }
+            }
+        }
+        throw new IllegalArgumentException("Matrix must have at least one row.");
+    }
+
+    private static Matrix error(String msg) {
+        return new ErrorMatrix(msg);
     }
 
     public int getWidth() {
@@ -34,6 +57,7 @@ public class Matrix {
         return height;
     }
 
+    @Deprecated(forRemoval = true)
     public boolean fill(Scanner input) {
         try {
             System.out.printf("Reading %dx%d matrix%n", width, height);
@@ -54,6 +78,18 @@ public class Matrix {
         return width == other.width && height == other.height;
     }
 
+    /**
+     * @return the dimensions of this matrix in the format "width x height"
+     */
+    public String getDimension() {
+        return width + "x" + height;
+    }
+
+    /**
+     * @return adds the 2 given matrizes together
+     * @apiNote may return an error instance.
+     * @see #isError()
+     */
     public Matrix add(Matrix other) {
         if (dimensionMatches(other)) {
             Matrix output = new Matrix(width, height);
@@ -64,7 +100,8 @@ public class Matrix {
             }
             return output;
         }
-        return ERROR;
+        return error("Dimensions of the 2 matrizes are different."
+                + getDimension() + " != " + other.getDimension());
     }
 
     void set(double val, int x, int y) {
@@ -122,14 +159,12 @@ public class Matrix {
                     double[] column = other.getColumn(x);
                     output.set(multiply(row, column), x, y);
                 }
-
-
             }
             return output;
         } else if (other.checkForMultiply(this)) {
             return other.multiply(this);
         }
-        return ERROR;
+        throw new IllegalArgumentException("Matrizes must be of the same size");
     }
 
     private double multiply(double[] row, double[] column) {
@@ -145,7 +180,8 @@ public class Matrix {
     }
 
     /**
-     * @param includeValues if true will copy all values of the 2dim array.
+     * @param includeValues if {@code true} will copy all values of the matrix.
+     *                      if {@code false} will simply instantiate another matrix of the same dimension
      * @return a matrix of the same size
      */
     public Matrix copy(boolean includeValues) {
@@ -160,10 +196,25 @@ public class Matrix {
         return m;
     }
 
+    /**
+     * @param type the type of the transposition. See {@link TranspositionType}
+     * @return a transposed matrix
+     * @throws IllegalArgumentException if the matrix width != matrix height
+     * @see TranspositionType
+     */
     public Matrix transpose(TranspositionType type) {
-        return type.apply(this);
+        if (width == height)
+            return type.apply(this);
+        else {
+            throw new IllegalArgumentException("Matrix width and height must be the same");
+        }
     }
 
+    /**
+     * @return The determinant of the given matrix or -1 if it cannot be computed.
+     * A determinant can only be computed if:
+     * <p>The width and height of the matrix are equal</p>
+     */
     public double getDeterminant() {
         if (width - height == 0) {
             if (width == 2) {
@@ -186,13 +237,13 @@ public class Matrix {
     }
 
     public Matrix getMinor(int excludedX, int excludedY) {
-        Matrix cofactor = new Matrix(width-1,width-1);
+        Matrix cofactor = new Matrix(width - 1, width - 1);
         int cofactorY = 0;
         int cofactorX = 0;
         for (int row = 0; row < width; row++) {
             for (int col = 0; col < width; col++) {
                 if (row != excludedX && col != excludedY) {
-                    cofactor.set(get(row,col),cofactorX++,cofactorY);
+                    cofactor.set(get(row, col), cofactorX++, cofactorY);
                     if (cofactorX == width - 1) {
                         cofactorX = 0;
                         cofactorY++;
@@ -211,13 +262,19 @@ public class Matrix {
         return getMinor(x).getDeterminant();
     }
 
+    /**
+     * @return The inverse of the given matrix.
+     * Cannot compute if the determinant computes to 0
+     * @apiNote may return an error instance.
+     * @see #isError()
+     */
     public Matrix inverse() {
         double det = getDeterminant();
         if (det == 0) {
-            System.out.print("Singular matrix, can't find its inverse");
-            return ERROR;
+            return error("determinant of the given matrix is 0," +
+                    " this matrix does not have an inverse");
         }
-        return getAdjoint().multiply(1/det).transpose(TranspositionType.MAIN_DIAGONAL);
+        return getAdjoint().multiply(1 / det).transpose(TranspositionType.MAIN_DIAGONAL);
     }
 
     private Matrix getAdjoint() {
@@ -250,6 +307,10 @@ public class Matrix {
         return result;
     }
 
+    /**
+     * @param digits The number of decimal places for each value
+     * @return a visual String representation of the matrix
+     */
     public String toString(int digits) {
         final String format = "%." + digits + "f";
         var out = new StringBuilder();
@@ -261,5 +322,9 @@ public class Matrix {
             out.append("\n");
         }
         return out.toString();
+    }
+
+    public boolean isError() {
+        return this instanceof ErrorMatrix;
     }
 }
