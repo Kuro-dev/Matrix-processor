@@ -154,4 +154,43 @@ public class MatrixConsistencyTest {
         assertEquals(mExpected, result);
     }
 
+    @Test
+    public void checkDeserializationAndSerialization() {
+        double[][] data = {
+                {10, 2, 3, 4, 5},
+                {1, 20, 3, 4, 5},
+                {1, 2, 30, 4, 5},
+                {1, 2, 3, 40, 5},
+                {1, 2, 3, 4, 50},
+        };
+        var m = Matrix.of(data);
+        var result = Matrix.of(m.toString());
+        assertEquals(m, result);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void parsingFaultyStringShouldThrowIllArgEx() {
+        var data = """
+                1 2 3 4
+                1 2 3 4
+                1 1.2 1.6 5 6""";
+        Matrix.of(data);
+    }
+
+    @Test
+    public void parsingCorrectStringShouldResultInCorrectMatrix() {
+        double[][] dataExpected = {
+                {1, 2, 3, 4},
+                {1, 2, 3, 4},
+                {1, 1.2, 1.6, 5}
+        };
+        var expected = Matrix.of(dataExpected);
+        var data = """
+                1 2 3 4
+                1 2 3 4
+                1 1.2 1.6 5""";
+        var result = Matrix.of(data);
+
+        assertEquals(expected, result);
+    }
 }

@@ -2,11 +2,12 @@ package processor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
+import java.text.ParseException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class Matrix implements Serializable {
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("(\\d+[.,]\\d+)|\\d+");
     @Serial
     private static final long serialVersionUID = 3945716045575686061L;
 
@@ -43,6 +44,35 @@ public class Matrix implements Serializable {
             }
         }
         throw new IllegalArgumentException("Matrix must have at least one row.");
+    }
+
+    public static Matrix of(String matrixData) {
+        List<List<Double>> doubleLines = new ArrayList<>();
+        String[] lines = matrixData.split("[\n]");
+        int height = lines.length;
+        int width = -1;
+        for (String line : lines) {
+            List<Double> lineDataSet = new ArrayList<>();
+            var data = NUMBER_PATTERN.matcher(line);
+            while (data.find()) {
+                String number = data.group();
+                lineDataSet.add(Double.parseDouble(number));
+            }
+            doubleLines.add(lineDataSet);
+            if (width == -1) {
+                width = lineDataSet.size();
+            } else if (width != lineDataSet.size()) {
+                throw new IllegalArgumentException("Matrix has differing line lengths");
+            }
+        }
+        double[][] dataSet = new double[height][width];
+        for (int y = 0; y < doubleLines.size(); y++) {
+            var line = doubleLines.get(y);
+            for (int x = 0; x < line.size(); x++) {
+                dataSet[y][x] = line.get(x);
+            }
+        }
+        return of(dataSet);
     }
 
     private static Matrix error(String msg) {
