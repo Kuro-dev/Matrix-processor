@@ -87,23 +87,6 @@ public class Matrix implements Serializable {
         return height;
     }
 
-    @Deprecated(forRemoval = true)
-    public boolean fill(Scanner input) {
-        try {
-            System.out.printf("Reading %dx%d matrix%n", width, height);
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    double val = input.nextDouble();
-                    set(val, x, y);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            return false;
-        }
-    }
-
     public boolean dimensionMatches(Matrix other) {
         return width == other.width && height == other.height;
     }
