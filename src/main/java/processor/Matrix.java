@@ -1,15 +1,13 @@
 package processor;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Matrix implements Serializable {
+public class Matrix {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("(\\d+[.,]\\d+)|\\d+");
-    @Serial
-    private static final long serialVersionUID = 3945716045575686061L;
 
     private final int width;
     private final int height;
@@ -36,16 +34,24 @@ public class Matrix implements Serializable {
         if (height > 0) {
             int width = data[0].length;
             for (double[] datum : data) {
-                if (datum.length == width) {
-                    return new Matrix(width, height, data);
-                } else {
+                if (datum.length != width) {
                     throw new IllegalArgumentException("All rows must have the same length");
                 }
             }
+            return new Matrix(width, height, data);
         }
         throw new IllegalArgumentException("Matrix must have at least one row.");
     }
 
+    /**
+     * Example String:
+     * <p>n n n n</p>
+     * <p>n n n n</p>
+     * <p>n n n n</p>
+     *
+     * @param matrixData The matrix string representation
+     * @return A parsed matrix object
+     */
     public static Matrix of(String matrixData) {
         List<List<Double>> doubleLines = new ArrayList<>();
         String[] lines = matrixData.split("[\n]");
@@ -139,18 +145,6 @@ public class Matrix implements Serializable {
             out[i] = get(x, i);
         }
         return out;
-    }
-
-    @Override
-    public String toString() {
-        var out = new StringBuilder();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                out.append(get(x, y)).append(" ");
-            }
-            out.append("\n");
-        }
-        return out.toString();
     }
 
     public Matrix multiply(double factor) {
@@ -283,9 +277,8 @@ public class Matrix implements Serializable {
      */
     public Matrix inverse() {
         double det = getDeterminant();
-        if (det == 0) {
-            return error("determinant of the given matrix is 0," +
-                    " this matrix does not have an inverse");
+        if (det <= 0) {
+            return error("this matrix does not have an inverse");
         }
         return getAdjoint().multiply(1 / det).transpose(TranspositionType.MAIN_DIAGONAL);
     }
@@ -294,7 +287,7 @@ public class Matrix implements Serializable {
         Matrix adjoint = new Matrix(width, height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                // sign of adj[j][i] positive if sum of row
+                // sign of adj[y][x] positive if sum of row
                 // and column indexes is even.
                 int sign = (((y + x) & 1) == 0) ? 1 : -1;
                 // Interchanging rows and columns to get the
@@ -318,6 +311,11 @@ public class Matrix implements Serializable {
         int result = Objects.hash(width, height);
         result = 31 * result + Arrays.deepHashCode(matrix);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return toString(1);
     }
 
     /**

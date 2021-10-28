@@ -1,4 +1,3 @@
-import org.junit.Assert;
 import org.junit.Test;
 import processor.Matrix;
 import processor.TranspositionType;
@@ -163,9 +162,10 @@ public class MatrixConsistencyTest {
                 {1, 2, 3, 40, 5},
                 {1, 2, 3, 4, 50},
         };
-        var m = Matrix.of(data);
-        var result = Matrix.of(m.toString());
-        assertEquals(m, result);
+        var original = Matrix.of(data);
+        var copy = Matrix.of(original.toString());
+        assertEquals(original, copy);
+        assertEquals(original, original.copy(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -188,7 +188,8 @@ public class MatrixConsistencyTest {
         var data = """
                 1 2 3 4
                 1 2 3 4
-                1 1.2 1.6 5""";
+                1 1.2 1.6 5
+                """;
         var result = Matrix.of(data);
 
         assertEquals(expected, result);

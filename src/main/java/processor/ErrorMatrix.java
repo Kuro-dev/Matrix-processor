@@ -69,6 +69,11 @@ public class ErrorMatrix extends Matrix {
     }
 
     @Override
+    public String toString() {
+        return message;
+    }
+
+    @Override
     public String toString(int digits) {
         return message;
     }

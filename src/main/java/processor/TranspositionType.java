@@ -5,6 +5,8 @@ import java.util.function.Function;
 public enum TranspositionType implements Function<Matrix, Matrix> {
 
     MAIN_DIAGONAL {
+        @SuppressWarnings("SuspiciousNameCombination")
+            //this works as intended.
         void setValue(Matrix out, double val, int x, int y) {
             out.set(val, y, x);
         }
