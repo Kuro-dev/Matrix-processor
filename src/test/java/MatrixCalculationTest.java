@@ -116,4 +116,25 @@ public class MatrixCalculationTest {
         assertEquals(mExpected, m2);
     }
 
+    @Test
+    public void matrixAdditionTest() {
+        double[][] input1 = {
+                {4, 7},
+                {2, 6}
+        };
+        double[][] input2 = {
+                {1, 7},
+                {-3, 1}
+        };
+        double[][] expectedData = {
+                {5, 14},
+                {-1, 7}
+        };
+        Matrix m1 = Matrix.of(input1);
+        Matrix m2 = Matrix.of(input2);
+        Matrix mExpected = Matrix.of(expectedData);
+        Matrix mResult = m1.add(m2);
+        assertEquals(mExpected, mResult);
+    }
+
 }

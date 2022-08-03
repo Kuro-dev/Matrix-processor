@@ -123,7 +123,7 @@ public class Matrix {
             }
             return output;
         }
-        return error("Dimensions of the 2 matrizes are different."
+        return error("Dimensions of the 2 matrices are different."
                 + getDimension() + " != " + other.getDimension());
     }
 
@@ -248,13 +248,13 @@ public class Matrix {
     }
 
     public Matrix getMinor(int excludedX, int excludedY) {
-        Matrix cofactor = new Matrix(width - 1, width - 1);
+        Matrix minor = new Matrix(width - 1, width - 1);
         int cofactorY = 0;
         int cofactorX = 0;
         for (int row = 0; row < width; row++) {
             for (int col = 0; col < width; col++) {
                 if (row != excludedX && col != excludedY) {
-                    cofactor.set(get(row, col), cofactorX++, cofactorY);
+                    minor.set(get(row, col), cofactorX++, cofactorY);
                     if (cofactorX == width - 1) {
                         cofactorX = 0;
                         cofactorY++;
@@ -262,7 +262,7 @@ public class Matrix {
                 }
             }
         }
-        return cofactor;
+        return minor;
     }
 
     public double getCofactor(int x, int y) {
@@ -320,6 +320,11 @@ public class Matrix {
         return equals(obj, 0.01d);
     }
 
+    /**
+     * @param o     other object to compare to
+     * @param delta the allowed divergence between 2 different matrix values. higher values mean less accuracy.
+     * @return true if the 2 objects are equal given the delta
+     */
     public boolean equals(Object o, double delta) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
