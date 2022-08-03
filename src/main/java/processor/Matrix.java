@@ -93,6 +93,10 @@ public class Matrix {
         return height;
     }
 
+    /**
+     * @param other Other matrix to check against
+     * @return true if width and height are equal
+     */
     public boolean dimensionMatches(Matrix other) {
         return width == other.width && height == other.height;
     }
@@ -127,7 +131,7 @@ public class Matrix {
         matrix[y][x] = val;
     }
 
-    double get(int x, int y) {
+   public double get(int x, int y) {
         return matrix[y][x];
     }
 
@@ -171,7 +175,7 @@ public class Matrix {
         } else if (other.checkForMultiply(this)) {
             return other.multiply(this);
         }
-        throw new IllegalArgumentException("Matrizes must be of the same size");
+        throw new IllegalArgumentException("Matrices must be of the same size");
     }
 
     private double multiply(double[] row, double[] column) {
@@ -236,7 +240,7 @@ public class Matrix {
                 return result;
             }
         }
-        return -1;
+        return 0;
     }
 
     public Matrix getMinor(int excludedX) {
@@ -277,8 +281,21 @@ public class Matrix {
      */
     public Matrix inverse() {
         double det = getDeterminant();
-        if (det <= 0) {
+        if (det == 0) {
             return error("this matrix does not have an inverse");
+        }
+        var result = copy(false);
+        if (width == 2 && height == 2) {
+            double a = get(0, 0);
+            result.set(a, 1, 1);
+            double d = get(1, 1);
+            result.set(d, 0, 0);
+
+            double b = get(1, 0);
+            result.set(b * -1, 1, 0);
+            double c = get(0, 1);
+            result.set(c * -1, 0, 1);
+            return result.multiply(1 / det);
         }
         return getAdjoint().multiply(1 / det).transpose(TranspositionType.MAIN_DIAGONAL);
     }
@@ -299,11 +316,35 @@ public class Matrix {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object obj) {
+        return equals(obj, 0.01d);
+    }
+
+    public boolean equals(Object o, double delta) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Matrix matrix1 = (Matrix) o;
-        return width == matrix1.width && height == matrix1.height && Arrays.deepEquals(matrix, matrix1.matrix);
+        Matrix other = (Matrix) o;
+        if (width == other.width && height == other.height) {
+            boolean equal = true;
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++) {
+                    if (equal) {
+                        equal = !doubleIsDifferent(get(x, y), other.get(x, y), delta);
+                    } else {
+                        return false;
+                    }
+                }
+            return equal;
+        }
+        return false;
+    }
+
+    private boolean doubleIsDifferent(double d1, double d2, double delta) {
+        if (Double.compare(d1, d2) == 0) {
+            return false;
+        } else {
+            return !(Math.abs(d1 - d2) <= delta);
+        }
     }
 
     @Override
@@ -332,10 +373,32 @@ public class Matrix {
             }
             out.append("\n");
         }
-        return out.toString();
+        return out.toString().replace(",", ".");
     }
 
     public boolean isError() {
         return this instanceof ErrorMatrix;
+    }
+
+
+    /**
+     * Calculates this - value
+     *
+     * @param value The value-matrix to subtract from this instance
+     * @return the new instance
+     */
+    public Matrix subtract(Matrix value) {
+        Matrix res;
+        if (dimensionMatches(value)) {
+            res = copy(false);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++) {
+                    double result = get(x, y) - value.get(x, y);
+                    res.set(result, x, y);
+                }
+            return res;
+        }
+        res = error("Matrices must be of same dimensions");
+        return res;
     }
 }

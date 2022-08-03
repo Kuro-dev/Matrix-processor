@@ -4,7 +4,7 @@ import processor.TranspositionType;
 
 import static org.junit.Assert.assertEquals;
 
-public class MatrixConsistencyTest {
+public class TranspositionTest {
 
     @Test
     public void checkTranspositionMain() {
@@ -103,95 +103,4 @@ public class MatrixConsistencyTest {
         m.transpose(TranspositionType.MAIN_DIAGONAL);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void multiplicationOfDifferentSizeMatrizesShouldThrowIllArgEx() {
-        double[][] input1 = {
-                {1, 2, 3, 4, 5},
-                {1, 2, 3, 4, 5}};
-        Matrix m1 = Matrix.of(input1);
-        double[][] input2 = {
-                {1, 2, 3, 4, 5},
-                {1, 2, 3, 4, 5}};
-        Matrix m2 = Matrix.of(input2);
-        var result = m1.multiply(m2);
-    }
-
-    @Test
-    public void multiplicationOfMatrixWithMultiplicantTest() {
-        double[][] input1 = {
-                {1, 2, 3, 4, 5},
-                {1, 2, 3, 4, 5}};
-        Matrix m1 = Matrix.of(input1);
-        var result = m1.multiply(3);
-        double[][] expectedData = {
-                {3, 6, 9, 12, 15},
-                {3, 6, 9, 12, 15},};
-        Matrix expected = Matrix.of(expectedData);
-        assertEquals(expected, result);
-    }
-
-    @Test
-    public void multiplicationOfValidMatrizesTest() {
-        double[][] input1 = {
-                {1, 2, 3, 4, 5},
-                {1, 2, 3, 4, 5}};
-        Matrix m1 = Matrix.of(input1);
-        double[][] input2 = {
-                {1, 2},
-                {3, 4},
-                {5, 5},
-                {4, 3},
-                {2, 1}
-        };
-        double[][] expectedData = {
-                {48, 42},
-                {48, 42},
-        };
-        var mExpected = Matrix.of(expectedData);
-        var m2 = Matrix.of(input2);
-        var result = m1.multiply(m2);
-        assertEquals(mExpected, result);
-    }
-
-    @Test
-    public void checkDeserializationAndSerialization() {
-        double[][] data = {
-                {10, 2, 3, 4, 5},
-                {1, 20, 3, 4, 5},
-                {1, 2, 30, 4, 5},
-                {1, 2, 3, 40, 5},
-                {1, 2, 3, 4, 50},
-        };
-        var original = Matrix.of(data);
-        var copy = Matrix.of(original.toString());
-        assertEquals(original, copy);
-        assertEquals(original, original.copy(true));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void parsingFaultyStringShouldThrowIllArgEx() {
-        var data = """
-                1 2 3 4
-                1 2 3 4
-                1 1.2 1.6 5 6""";
-        Matrix.of(data);
-    }
-
-    @Test
-    public void parsingCorrectStringShouldResultInCorrectMatrix() {
-        double[][] dataExpected = {
-                {1, 2, 3, 4},
-                {1, 2, 3, 4},
-                {1, 1.2, 1.6, 5}
-        };
-        var expected = Matrix.of(dataExpected);
-        var data = """
-                1 2 3 4
-                1 2 3 4
-                1 1.2 1.6 5
-                """;
-        var result = Matrix.of(data);
-
-        assertEquals(expected, result);
-    }
 }

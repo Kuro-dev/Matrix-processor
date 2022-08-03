@@ -3,7 +3,23 @@ package processor;
 import java.util.function.Function;
 
 public enum TranspositionType implements Function<Matrix, Matrix> {
-
+    /**
+     * <pre>
+     * Example:
+     *  input =
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *  expected =
+     *      {1, 1, 1, 1, 1},
+     *      {2, 2, 2, 2, 2},
+     *      {3, 3, 3, 3, 3},
+     *      {4, 4, 4, 4, 4},
+     *      {5, 5, 5, 5, 5},
+     * </pre>
+     */
     MAIN_DIAGONAL {
         @SuppressWarnings("SuspiciousNameCombination")
             //this works as intended.
@@ -11,16 +27,68 @@ public enum TranspositionType implements Function<Matrix, Matrix> {
             out.set(val, y, x);
         }
     },
+
+    /**
+     * <pre>
+     * Example:
+     *  input =
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *  expected =
+     *      {5, 5, 5, 5, 5},
+     *      {4, 4, 4, 4, 4},
+     *      {3, 3, 3, 3, 3},
+     *      {2, 2, 2, 2, 2},
+     *      {1, 1, 1, 1, 1},
+     * </pre>
+     */
     SIDE_DIAGONAL {
         void setValue(Matrix out, double val, int x, int y) {
             out.set(val, out.getWidth() - (1 + y), out.getHeight() - (1 + x));
         }
     },
+    /**
+     * <pre>
+     * Example:
+     *  input =
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *      {1, 2, 3, 4, 5},
+     *  expected =
+     *      {5, 4, 3, 2, 1},
+     *      {5, 4, 3, 2, 1},
+     *      {5, 4, 3, 2, 1},
+     *      {5, 4, 3, 2, 1},
+     *      {5, 4, 3, 2, 1},
+     * </pre>
+     */
     VERTICAL_LINE {
         void setValue(Matrix out, double val, int x, int y) {
             out.set(val, out.getWidth() - (1 + x), y);
         }
     },
+    /**
+     * <pre>
+     * Example:
+     *  input =
+     *      {10, 2, 3, 4, 5},
+     *      {1, 20, 3, 4, 5},
+     *      {1, 2, 30, 4, 5},
+     *      {1, 2, 3, 40, 5},
+     *      {1, 2, 3, 4, 50},
+     *  expected =
+     *      {1, 2, 3, 4, 50},
+     *      {1, 2, 3, 40, 5},
+     *      {1, 2, 30, 4, 5},
+     *      {1, 20, 3, 4, 5},
+     *      {10, 2, 3, 4, 5},
+     * </pre>
+     */
     HORIZONTAL_LINE {
         void setValue(Matrix out, double val, int x, int y) {
             out.set(val, x, out.getHeight() - (1 + y));
