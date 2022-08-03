@@ -1,4 +1,4 @@
-package processor;
+package org.kurodev.matrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;

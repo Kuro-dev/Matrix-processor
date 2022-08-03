@@ -1,6 +1,6 @@
 import org.junit.Test;
-import processor.Matrix;
-import processor.TranspositionType;
+import org.kurodev.matrix.Matrix;
+import org.kurodev.matrix.TranspositionType;
 
 import static org.junit.Assert.assertEquals;
 

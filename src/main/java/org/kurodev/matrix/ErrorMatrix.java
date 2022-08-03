@@ -1,4 +1,4 @@
-package processor;
+package org.kurodev.matrix;
 
 public class ErrorMatrix extends Matrix {
 

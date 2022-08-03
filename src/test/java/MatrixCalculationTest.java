@@ -1,5 +1,5 @@
 import org.junit.Test;
-import processor.Matrix;
+import org.kurodev.matrix.Matrix;
 
 import static org.junit.Assert.assertEquals;
 

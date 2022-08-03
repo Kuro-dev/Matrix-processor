@@ -9,7 +9,7 @@ If you encounter bugs or spot potential issues, give me an example case, and I s
 soon as I get to it.
 
 ```java
-import processor.Matrix;
+import Matrix;
 
 public class Example {
     public void createMatrixFromArray() {
@@ -31,7 +31,7 @@ public class Example {
                 1 2 3 4
                 1 1.2 1.6 5 6
                 """;
-       Matrix m = Matrix.of(data);
+        Matrix m = Matrix.of(data);
     }
 
     public void createMatrixWithoutData() {
