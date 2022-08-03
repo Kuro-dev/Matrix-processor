@@ -131,7 +131,7 @@ public class Matrix {
         matrix[y][x] = val;
     }
 
-   public double get(int x, int y) {
+    public double get(int x, int y) {
         return matrix[y][x];
     }
 
@@ -222,12 +222,12 @@ public class Matrix {
     }
 
     /**
-     * @return The determinant of the given matrix or -1 if it cannot be computed.
+     * @return The determinant of the given matrix or {@link Double#NaN} if it cannot be computed.
      * A determinant can only be computed if:
      * <p>The width and height of the matrix are equal</p>
      */
     public double getDeterminant() {
-        if (width - height == 0) {
+        if (width == height) {
             if (width == 2) {
                 return (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
             } else {
@@ -240,7 +240,7 @@ public class Matrix {
                 return result;
             }
         }
-        return 0;
+        return Double.NaN;
     }
 
     public Matrix getMinor(int excludedX) {
@@ -281,7 +281,7 @@ public class Matrix {
      */
     public Matrix inverse() {
         double det = getDeterminant();
-        if (det == 0) {
+        if (det == 0 || Double.isNaN(det)) {
             return error("this matrix does not have an inverse");
         }
         var result = copy(false);
