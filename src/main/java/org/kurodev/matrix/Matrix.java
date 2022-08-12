@@ -1,9 +1,6 @@
 package org.kurodev.matrix;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Matrix {
@@ -13,7 +10,6 @@ public class Matrix {
     private final int height;
     private final double[][] matrix;
 
-
     public Matrix(int width, int height) {
         this(width, height, new double[height][width]);
     }
@@ -22,6 +18,23 @@ public class Matrix {
         this.width = width;
         this.height = height;
         this.matrix = matrix;
+    }
+
+
+    /**
+     * @param rng    Random instance
+     * @param width  Width of the matrix
+     * @param height Height of the matrix
+     * @return A randomized instance
+     */
+    public static Matrix of(Random rng, int width, int height) {
+        double[][] dataSet = new double[height][width];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                dataSet[y][x] = rng.nextDouble();
+            }
+        }
+        return new Matrix(width, height, dataSet);
     }
 
     /**
@@ -81,8 +94,8 @@ public class Matrix {
         return of(dataSet);
     }
 
-    private static Matrix error(String msg) {
-        return new ErrorMatrix(msg);
+    private Matrix error(String msg) {
+        return new ErrorMatrix(msg, this);
     }
 
     public int getWidth() {
@@ -109,8 +122,8 @@ public class Matrix {
     }
 
     /**
-     * @return adds the 2 given matrizes together
-     * @apiNote may return an error instance.
+     * @return adds the 2 given matrices together
+     * @apiNote May return an {@link ErrorMatrix}
      * @see #isError()
      */
     public Matrix add(Matrix other) {
@@ -276,7 +289,7 @@ public class Matrix {
     /**
      * @return The inverse of the given matrix.
      * Cannot compute if the determinant computes to 0
-     * @apiNote may return an error instance.
+     * @apiNote May return an {@link ErrorMatrix}
      * @see #isError()
      */
     public Matrix inverse() {
@@ -361,15 +374,21 @@ public class Matrix {
 
     @Override
     public String toString() {
-        return toString(1);
+        return toString(-1);
     }
 
     /**
      * @param digits The number of decimal places for each value
      * @return a visual String representation of the matrix
+     * @implNote This string is parsable using {@link #of(String) Matrix.of(String)} method
      */
     public String toString(int digits) {
-        final String format = "%." + digits + "f";
+        final String format;
+        if (digits == -1) {
+            format = "%f";
+        } else {
+            format = "%." + digits + "f";
+        }
         var out = new StringBuilder();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -391,6 +410,8 @@ public class Matrix {
      *
      * @param value The value-matrix to subtract from this instance
      * @return the new instance
+     * @apiNote May return an {@link ErrorMatrix}
+     * @see #isError()
      */
     public Matrix subtract(Matrix value) {
         Matrix res;
