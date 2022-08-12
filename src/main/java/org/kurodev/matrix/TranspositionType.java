@@ -71,22 +71,6 @@ public enum TranspositionType implements Function<Matrix, Matrix> {
         }
     };
 
-    public static TranspositionType valueOf(int ordinal) {
-        if (TranspositionType.MAIN_DIAGONAL.ordinal() == ordinal) {
-            return TranspositionType.MAIN_DIAGONAL;
-        }
-        if (TranspositionType.SIDE_DIAGONAL.ordinal() == ordinal) {
-            return TranspositionType.SIDE_DIAGONAL;
-        }
-        if (TranspositionType.VERTICAL_LINE.ordinal() == ordinal) {
-            return TranspositionType.VERTICAL_LINE;
-        }
-        if (TranspositionType.HORIZONTAL_LINE.ordinal() == ordinal) {
-            return TranspositionType.HORIZONTAL_LINE;
-        }
-        throw new IllegalArgumentException("Unknown type: " + ordinal);
-    }
-
     @Override
     public Matrix apply(Matrix matrix) {
         Matrix out = matrix.copy(false);
