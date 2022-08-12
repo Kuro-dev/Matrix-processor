@@ -1,6 +1,8 @@
 import org.junit.Test;
 import org.kurodev.matrix.Matrix;
 
+import java.util.Random;
+
 import static org.junit.Assert.assertEquals;
 
 public class ParsingTests {
@@ -24,7 +26,8 @@ public class ParsingTests {
         var data = """
                 1 2 3 4
                 1 2 3 4
-                1 1.2 1.6 5 6""";
+                1 1.2 1.6 5 6
+                """;
         Matrix.of(data);
     }
 
@@ -44,5 +47,15 @@ public class ParsingTests {
         var result = Matrix.of(data);
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void anyMatrixShouldWorkFromString() {
+        Random random = new Random();
+        for (int i = 0; i < 1000; i++) {
+            Matrix m1 = Matrix.of(random, 20, 20);
+            Matrix m2 = Matrix.of(m1.toString());
+            assertEquals(m1, m2);
+        }
     }
 }

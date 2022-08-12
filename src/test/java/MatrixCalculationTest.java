@@ -2,6 +2,7 @@ import org.junit.Test;
 import org.kurodev.matrix.Matrix;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MatrixCalculationTest {
     @Test(expected = IllegalArgumentException.class)
@@ -137,4 +138,19 @@ public class MatrixCalculationTest {
         assertEquals(mExpected, mResult);
     }
 
+    @Test
+    public void matrixInvalidAdditionTest() {
+        double[][] input1 = {
+                {4, 7},
+                {2, 6}
+        };
+        double[][] input2 = {
+                {1, 7, 3},
+                {-3, 1, 2}
+        };
+        Matrix m1 = Matrix.of(input1);
+        Matrix m2 = Matrix.of(input2);
+        Matrix mResult = m1.add(m2);
+        assertTrue(mResult.isError());
+    }
 }
