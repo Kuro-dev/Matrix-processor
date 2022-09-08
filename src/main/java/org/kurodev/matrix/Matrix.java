@@ -2,6 +2,8 @@ package org.kurodev.matrix;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 public class Matrix {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("(\\d+[.,]\\d+)|\\d+");
@@ -362,6 +364,28 @@ public class Matrix {
             return false;
         } else {
             return !(Math.abs(d1 - d2) <= delta);
+        }
+    }
+
+    public double[] toArray() {
+        return Stream.of(matrix).flatMapToDouble(DoubleStream::of).toArray();
+    }
+
+    public void sigmoid() {
+        Matrix temp = copy(false);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                temp.set(1 / (1 + Math.exp(-get(x, y))), x, y);
+            }
+        }
+    }
+
+    public void dsigmoid() {
+        Matrix temp = copy(false);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                temp.set(get(x, y) * (1 - get(x, y)), x, y);
+            }
         }
     }
 

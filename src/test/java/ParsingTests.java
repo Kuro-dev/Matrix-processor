@@ -3,9 +3,12 @@ import org.kurodev.matrix.Matrix;
 
 import java.util.Random;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class ParsingTests {
+    private static final Random random = new Random();
+
     @Test
     public void checkDeserializationAndSerialization() {
         double[][] data = {
@@ -51,11 +54,21 @@ public class ParsingTests {
 
     @Test
     public void anyMatrixShouldWorkFromString() {
-        Random random = new Random();
         for (int i = 0; i < 1000; i++) {
             Matrix m1 = Matrix.of(random, 20, 20);
             Matrix m2 = Matrix.of(m1.toString());
             assertEquals(m1, m2);
         }
+    }
+
+    @Test
+    public void matrixToArrayTest() {
+        var data = """
+                1 2
+                3 4
+                """;
+        var m1 = Matrix.of(data);
+        double[] expected = {1d, 2d, 3d, 4d};
+        assertArrayEquals(expected, m1.toArray(), 0.000001);
     }
 }
