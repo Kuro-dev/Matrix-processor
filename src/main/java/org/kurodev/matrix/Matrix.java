@@ -124,9 +124,15 @@ public class Matrix {
     }
 
     /**
-     * @return adds the 2 given matrices together
+     * adds the 2 matrices together.
+     * In order for this operation to complete successfully the dimensions of the matrices must match.
+     * <p>widthA == widthB</p>
+     * <p>heightA == heightB</p>
+     *
+     * @return A new matrix with resulting values
      * @apiNote May return an {@link ErrorMatrix}
      * @see #isError()
+     * @see #dimensionMatches(Matrix)
      */
     public Matrix add(Matrix other) {
         if (dimensionMatches(other)) {
@@ -146,6 +152,12 @@ public class Matrix {
         matrix[y][x] = val;
     }
 
+    /**
+     * @param x row indicator
+     * @param y column indicator
+     * @return the value at that position.
+     * @throws IndexOutOfBoundsException if the given integers are out of bounds of the matrix.
+     */
     public double get(int x, int y) {
         return matrix[y][x];
     }
@@ -166,6 +178,12 @@ public class Matrix {
         return out;
     }
 
+    /**
+     * Multiplies every value in the matrix by the given factor.
+     *
+     * @param factor The multiplicator
+     * @return A new matrix with the multiplied values
+     */
     public Matrix multiply(double factor) {
         Matrix out = new Matrix(width, height);
         for (int y = 0; y < height; y++) {
@@ -176,6 +194,15 @@ public class Matrix {
         return out;
     }
 
+    /**
+     * Multiplies to matrices together. In order for this operation to complete successfully
+     * Matrix {@code a.width} must equal {@code b.height} and vis versa
+     *
+     * @param other Matrix to multiply with
+     * @return A new matrix with the multiplied values
+     * @apiNote May return an {@link ErrorMatrix} if the width and height of the matrices do not fit.
+     * @see #isError()
+     */
     public Matrix multiply(Matrix other) {
         if (checkForMultiply(other)) {
             Matrix output = new Matrix(other.width, height);
@@ -190,7 +217,7 @@ public class Matrix {
         } else if (other.checkForMultiply(this)) {
             return other.multiply(this);
         }
-        throw new IllegalArgumentException("Matrices must be of the same size");
+        return error("Width and height do not match.");
     }
 
     private double multiply(double[] row, double[] column) {
@@ -225,14 +252,15 @@ public class Matrix {
     /**
      * @param type the type of the transposition. See {@link TranspositionType}
      * @return a transposed matrix
-     * @throws IllegalArgumentException if the matrix width != matrix height
+     * @apiNote May return an {@link ErrorMatrix} if the width and height of the matrix differ
+     * @see #isError()
      * @see TranspositionType
      */
     public Matrix transpose(TranspositionType type) {
         if (width == height)
             return type.apply(this);
         else {
-            throw new IllegalArgumentException("Matrix width and height must be the same");
+            return error("Matrix width and height must be the same");
         }
     }
 
@@ -240,6 +268,7 @@ public class Matrix {
      * @return The determinant of the given matrix or {@link Double#NaN} if it cannot be computed.
      * A determinant can only be computed if:
      * <p>The width and height of the matrix are equal</p>
+     * <p>May return {@link Double#NaN}</p>
      */
     public double getDeterminant() {
         if (width == height) {
@@ -258,10 +287,22 @@ public class Matrix {
         return Double.NaN;
     }
 
+    /**
+     * Generates a minor matrix of dimension x-1/y-1
+     *
+     * @param excludedX The row to exclude from the old matrix when copying values
+     */
     public Matrix getMinor(int excludedX) {
         return getMinor(excludedX, 0);
     }
 
+    /**
+     * Generates a minor matrix of dimension x-1/y-1
+     *
+     * @param excludedX The row to exclude from the old matrix when copying values
+     * @param excludedY The column to exclude from the old matrix when copying values.
+     *                  Default: {@code 0}
+     */
     public Matrix getMinor(int excludedX, int excludedY) {
         Matrix minor = new Matrix(width - 1, width - 1);
         int cofactorY = 0;
@@ -280,10 +321,18 @@ public class Matrix {
         return minor;
     }
 
+    /**
+     * @apiNote May return an {@link ErrorMatrix} if the given matrices minor does not have a determinant
+     * @see #isError()
+     */
     public double getCofactor(int x, int y) {
         return getMinor(x, y).getDeterminant();
     }
 
+    /**
+     * @apiNote May return an {@link ErrorMatrix} if the given matrices minor does not have a determinant
+     * @see #isError()
+     */
     public double getCofactor(int x) {
         return getMinor(x).getDeterminant();
     }
@@ -291,7 +340,7 @@ public class Matrix {
     /**
      * @return The inverse of the given matrix.
      * Cannot compute if the determinant computes to 0
-     * @apiNote May return an {@link ErrorMatrix}
+     * @apiNote May return an {@link ErrorMatrix} if the given matrix does not have a determinant
      * @see #isError()
      */
     public Matrix inverse() {
@@ -330,6 +379,9 @@ public class Matrix {
         return adjoint;
     }
 
+    /**
+     * @see #equals(Object, double)
+     */
     @Override
     public boolean equals(Object obj) {
         return equals(obj, 0.01d);
@@ -338,6 +390,7 @@ public class Matrix {
     /**
      * @param o     other object to compare to
      * @param delta the allowed divergence between 2 different matrix values. higher values mean less accuracy.
+     *              Default: {@code 0.01d}
      * @return true if the 2 objects are equal given the delta
      */
     public boolean equals(Object o, double delta) {
@@ -367,10 +420,15 @@ public class Matrix {
         }
     }
 
+    /**
+     * @return An array with length of
+     * {@link #width} * {@link #height}
+     */
     public double[] toArray() {
         return Stream.of(matrix).flatMapToDouble(DoubleStream::of).toArray();
     }
 
+    //untested
     public void sigmoid() {
         Matrix temp = copy(false);
         for (int y = 0; y < height; y++) {
@@ -380,6 +438,7 @@ public class Matrix {
         }
     }
 
+    //untested
     public void dsigmoid() {
         Matrix temp = copy(false);
         for (int y = 0; y < height; y++) {
@@ -434,7 +493,7 @@ public class Matrix {
      *
      * @param value The value-matrix to subtract from this instance
      * @return the new instance
-     * @apiNote May return an {@link ErrorMatrix}
+     * @apiNote May return an {@link ErrorMatrix} if the matrices are of different dimensions.
      * @see #isError()
      */
     public Matrix subtract(Matrix value) {
@@ -448,7 +507,6 @@ public class Matrix {
                 }
             return res;
         }
-        res = error("Matrices must be of same dimensions");
-        return res;
+        return error("Matrices must be of same dimensions");
     }
 }

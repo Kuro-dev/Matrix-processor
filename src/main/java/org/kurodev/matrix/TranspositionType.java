@@ -2,6 +2,13 @@ package org.kurodev.matrix;
 
 import java.util.function.Function;
 
+/**
+ * Enum containing all the different types of Transpositions.
+ * @see #HORIZONTAL_LINE
+ * @see #MAIN_DIAGONAL
+ * @see #SIDE_DIAGONAL
+ * @see #VERTICAL_LINE
+ */
 public enum TranspositionType implements Function<Matrix, Matrix> {
     /**
      * <pre>

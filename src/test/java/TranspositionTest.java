@@ -3,6 +3,7 @@ import org.kurodev.matrix.Matrix;
 import org.kurodev.matrix.TranspositionType;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TranspositionTest {
 
@@ -94,13 +95,13 @@ public class TranspositionTest {
         assertEquals(expectedMatrix, result);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void invalidTranspositionShouldThrowIllegalArgEx() {
+    public void invalidTranspositionShouldResultInErrorMatrix() {
         double[][] input = {
                 {1, 2, 3, 4, 5},
                 {1, 2, 3, 4, 5}};
         Matrix m = Matrix.of(input);
-        m.transpose(TranspositionType.MAIN_DIAGONAL);
+        Matrix result = m.transpose(TranspositionType.MAIN_DIAGONAL);
+        assertTrue(result.isError());
     }
 
 }

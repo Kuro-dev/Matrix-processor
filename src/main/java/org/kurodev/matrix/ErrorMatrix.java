@@ -66,6 +66,21 @@ public class ErrorMatrix extends Matrix {
     }
 
     @Override
+    public double getCofactor(int x) {
+        throw new UnsupportedOperationException(message);
+    }
+
+    @Override
+    public boolean equals(Object o, double delta) {
+        return false;
+    }
+
+    @Override
+    public double[] toArray() {
+        throw new UnsupportedOperationException(message);
+    }
+
+    @Override
     public Matrix inverse() {
         throw new UnsupportedOperationException(message);
 
