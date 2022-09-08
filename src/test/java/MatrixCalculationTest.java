@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MatrixCalculationTest {
-    @Test(expected = IllegalArgumentException.class)
-    public void multiplicationOfDifferentSizeMatrizesShouldThrowIllArgEx() {
+    @Test
+    public void multiplicationOfDifferentSizeMatrizesShouldResultInError() {
         double[][] input1 = {
                 {1, 2, 3, 4, 5},
                 {1, 2, 3, 4, 5}};
@@ -15,7 +15,8 @@ public class MatrixCalculationTest {
                 {1, 2, 3, 4, 5},
                 {1, 2, 3, 4, 5}};
         Matrix m2 = Matrix.of(input2);
-        m1.multiply(m2); //here exception
+        Matrix result = m1.multiply(m2); //here error
+        assertTrue(result.isError());
     }
 
     @Test
