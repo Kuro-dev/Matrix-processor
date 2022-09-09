@@ -98,7 +98,6 @@ public class Matrix {
 
     public static Matrix of(byte[] data) {
         byte[] buf = new byte[Double.BYTES];
-        //TODO implement this
         System.arraycopy(data, 0, buf, 0, Integer.BYTES);
         int width = ByteUtils.toInt(buf);
         System.arraycopy(data, Integer.BYTES, buf, 0, Integer.BYTES);
