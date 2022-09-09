@@ -55,7 +55,7 @@ public class ParsingTests {
     @Test
     public void anyMatrixShouldWorkFromString() {
         for (int i = 0; i < 1000; i++) {
-            Matrix m1 = Matrix.of(random, 20, 20);
+            Matrix m1 = Matrix.of(random, 5, 5);
             Matrix m2 = Matrix.of(m1.toString());
             assertEquals(m1, m2);
         }

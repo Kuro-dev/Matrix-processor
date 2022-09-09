@@ -103,14 +103,23 @@ public class Matrix {
         int width = ByteUtils.toInt(buf);
         System.arraycopy(data, Integer.BYTES, buf, 0, Integer.BYTES);
         int height = ByteUtils.toInt(buf);
+        int expectedLength = (width * height * Double.BYTES) + Integer.BYTES * 2;
+        if (expectedLength > data.length) {
+            String msg = "Invalid not enough data. Expected " + expectedLength + "bytes but got " + data.length;
+            return new ErrorMatrix(msg, null);
+        }
+        int pos = (Integer.BYTES * 2);
         Matrix result = new Matrix(width, height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int pos = (y * x + x) * Double.BYTES;
-                System.arraycopy(data, 0, buf, 0, Integer.BYTES);
+                int dataPos = ((x * height) + y) * Double.BYTES;
+                System.arraycopy(data, pos, buf, 0, Double.BYTES);
+                pos += Double.BYTES;
                 double value = ByteUtils.toDouble(buf);
+                result.set(value, x, y);
             }
         }
+        return result;
     }
 
     private Matrix error(String msg) {
