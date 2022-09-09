@@ -96,6 +96,23 @@ public class Matrix {
         return of(dataSet);
     }
 
+    public static Matrix of(byte[] data) {
+        byte[] buf = new byte[Double.BYTES];
+        //TODO implement this
+        System.arraycopy(data, 0, buf, 0, Integer.BYTES);
+        int width = ByteUtils.toInt(buf);
+        System.arraycopy(data, Integer.BYTES, buf, 0, Integer.BYTES);
+        int height = ByteUtils.toInt(buf);
+        Matrix result = new Matrix(width, height);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pos = (y * x + x) * Double.BYTES;
+                System.arraycopy(data, 0, buf, 0, Integer.BYTES);
+                double value = ByteUtils.toDouble(buf);
+            }
+        }
+    }
+
     private Matrix error(String msg) {
         return new ErrorMatrix(msg, this);
     }
@@ -487,6 +504,18 @@ public class Matrix {
         return this instanceof ErrorMatrix;
     }
 
+    public byte[] toByteArray() {
+        final byte[] out = new byte[(Integer.BYTES * 2) + (width * height * Double.BYTES)];
+        System.arraycopy(ByteUtils.toByteArray(width), 0, out, 0, Integer.BYTES);
+        System.arraycopy(ByteUtils.toByteArray(height), 0, out, Integer.BYTES, Integer.BYTES);
+        int startPos = (Integer.BYTES * 2);
+        double[] data = toArray();
+        for (int i = 0; i < data.length; i++) {
+            int arrPos = startPos + (i * Double.BYTES);
+            System.arraycopy(ByteUtils.toByteArray(data[i]), 0, out, arrPos, Double.BYTES);
+        }
+        return out;
+    }
 
     /**
      * Calculates this - value
