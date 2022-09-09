@@ -104,7 +104,7 @@ public class Matrix {
         int height = ByteUtils.toInt(buf);
         int expectedLength = (width * height * Double.BYTES) + Integer.BYTES * 2;
         if (expectedLength > data.length) {
-            String msg = "Invalid not enough data. Expected " + expectedLength + "bytes but got " + data.length;
+            String msg = "Expected " + expectedLength + "bytes but got " + data.length;
             return new ErrorMatrix(msg, null);
         }
         int pos = (Integer.BYTES * 2);
