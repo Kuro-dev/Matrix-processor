@@ -113,11 +113,6 @@ public class ErrorMatrix extends Matrix {
     }
 
     @Override
-    void set(double val, int x, int y) {
-        throw new UnsupportedOperationException(message);
-    }
-
-    @Override
     public double get(int x, int y) {
         throw new UnsupportedOperationException(message);
     }

@@ -185,7 +185,7 @@ public class Matrix {
                 + getDimension() + " != " + other.getDimension());
     }
 
-    void set(double val, int x, int y) {
+    final void set(double val, int x, int y) {
         determinant = null;
         matrix[y][x] = val;
     }
@@ -285,6 +285,16 @@ public class Matrix {
             }
         }
         return m;
+    }
+
+    /**
+     * @return a transposed matrix along the main diagonal
+     * @apiNote May return an {@link ErrorMatrix} if the width and height of the matrix differ
+     * @see #isError()
+     * @see TranspositionType#MAIN_DIAGONAL
+     */
+    public Matrix transpose() {
+        return transpose(TranspositionType.MAIN_DIAGONAL);
     }
 
     /**
@@ -403,7 +413,7 @@ public class Matrix {
             result.set(c * -1, 0, 1);
             return result.multiply(1 / det);
         }
-        return getAdjoint().multiply(1 / det).transpose(TranspositionType.MAIN_DIAGONAL);
+        return getAdjoint().multiply(1 / det).transpose();
     }
 
     private Matrix getAdjoint() {
@@ -563,5 +573,33 @@ public class Matrix {
             return res;
         }
         return error("Matrices must be of same dimensions");
+    }
+
+    /**
+     * determines whether or not a matrix is symmetric or not.
+     * In linear algebra, a symmetric matrix is a square matrix that is equal to its transpose.
+     *
+     * @implNote will return {@code false} if the matrix is not square.
+     */
+    public boolean isSymmetric() {
+        return equals(transpose());
+    }
+
+    /**
+     * @return true if the matrix is a real matrix.
+     * A matrix is real only if all the values are positive real numbers.
+     */
+    public boolean isReal() {
+        boolean isReal = true;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (isReal) {
+                    isReal = get(x, y) > 0;
+                } else {
+                    break;
+                }
+            }
+        }
+        return isReal;
     }
 }
