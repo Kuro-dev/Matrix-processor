@@ -18,7 +18,7 @@ public class MatrixSymmetryTest {
     }
 
     @Test
-    public void bixMatrixShouldAlsoBeSymmetric() {
+    public void bigMatrixShouldAlsoBeSymmetric() {
         double[][] matrixData = {
                 {1, 7, 3, 9, 8},
                 {7, 2, 6, 5, 9},
@@ -29,6 +29,20 @@ public class MatrixSymmetryTest {
         Matrix m1 = Matrix.of(matrixData);
         assertEquals(m1, m1.transpose());
         assertTrue(m1.isSymmetric());
+    }
+
+    @Test
+    public void inverseOfMatrixShouldBeSymmetricTooIfExists() {
+        double[][] matrixData = {
+                {1, 7, 3, 9, 8},
+                {7, 2, 6, 5, 9},
+                {3, 6, 3, 2, 3},
+                {9, 5, 2, 4, 7},
+                {8, 9, 3, 7, 5},
+        };
+        Matrix invertedM1 = Matrix.of(matrixData).inverse();
+        assertEquals(invertedM1, invertedM1.transpose());
+        assertTrue(invertedM1.isSymmetric());
     }
 
     @Test
