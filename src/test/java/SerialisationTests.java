@@ -54,7 +54,7 @@ public class SerialisationTests {
     @Test
     public void anyMatrixShouldWorkFromString() {
         for (int i = 0; i < 1000; i++) {
-            Matrix m1 = Matrix.of(RANDOM, 5, 5);
+            Matrix m1 = Matrix.of(5, 5, RANDOM);
             Matrix m2 = Matrix.of(m1.toString());
             assertEquals(m1, m2);
         }
@@ -74,7 +74,7 @@ public class SerialisationTests {
     @Test
     public void anyMatrixShouldWorkFromByteArray() {
         for (int i = 0; i < 1000; i++) {
-            Matrix m1 = Matrix.of(RANDOM, 5, 5);
+            Matrix m1 = Matrix.of(5, 5, RANDOM);
             Matrix m2 = Matrix.of(m1.toByteArray());
             assertEquals(m1, m2);
         }

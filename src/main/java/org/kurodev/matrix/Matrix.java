@@ -13,24 +13,27 @@ public class Matrix {
     private final double[][] matrix;
     private Double determinant = null;
 
-    public Matrix(int width, int height) {
+    protected Matrix(int width, int height) {
         this(width, height, new double[height][width]);
     }
 
-    private Matrix(int width, int height, double[][] matrix) {
+    protected Matrix(int width, int height, double[][] matrix) {
         this.width = width;
         this.height = height;
         this.matrix = matrix;
     }
 
+    public static Matrix of(int width, int height) {
+        return new Matrix(width, height);
+    }
 
     /**
-     * @param rng    Random instance
      * @param width  Width of the matrix
      * @param height Height of the matrix
+     * @param rng    Random instance
      * @return A randomized instance
      */
-    public static Matrix of(Random rng, int width, int height) {
+    public static Matrix of(int width, int height, Random rng) {
         double[][] dataSet = new double[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -185,9 +188,9 @@ public class Matrix {
                 + getDimension() + " != " + other.getDimension());
     }
 
-    final void set(double val, int x, int y) {
-        determinant = null;
-        matrix[y][x] = val;
+   protected final void set(double val, int x, int y) {
+       determinant = null;
+       matrix[y][x] = val;
     }
 
     /**
@@ -562,9 +565,8 @@ public class Matrix {
      * @see #isError()
      */
     public Matrix subtract(Matrix value) {
-        Matrix res;
         if (dimensionMatches(value)) {
-            res = copy(false);
+            Matrix res = copy(false);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++) {
                     double result = get(x, y) - value.get(x, y);
