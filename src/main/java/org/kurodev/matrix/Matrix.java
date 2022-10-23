@@ -188,9 +188,9 @@ public class Matrix {
                 + getDimension() + " != " + other.getDimension());
     }
 
-   protected final void set(double val, int x, int y) {
-       determinant = null;
-       matrix[y][x] = val;
+    protected final void set(double val, int x, int y) {
+        determinant = null;
+        matrix[y][x] = val;
     }
 
     /**
@@ -437,22 +437,22 @@ public class Matrix {
     /**
      * @see #equals(Object, double)
      */
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
-    public boolean equals(Object obj) {
-        return equals(obj, 0.01d);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Matrix other = (Matrix) o;
+        return equals(other, 0.01d);
     }
 
     /**
-     * @param o     other object to compare to
+     * @param other     other object to compare to
      * @param delta the allowed divergence between 2 different matrix values. higher values mean less accuracy.
      *              Default: {@code 0.01d}
      * @return true if the 2 objects are equal given the delta
      */
-    public boolean equals(Object o, double delta) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Matrix other = (Matrix) o;
+    public boolean equals(Matrix other, double delta) {
         if (width == other.width && height == other.height) {
             boolean equal = true;
             for (int y = 0; y < height; y++)
