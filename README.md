@@ -42,3 +42,10 @@ public class Example {
 }
 
 ```
+By default, Matrices are immutable.
+if necessary another class may Inherit the Matrix class and use
+the protected access Matrix#set method to change the contents of the matrix.
+
+Any Matrix method that returns a Matrix will return a new copy with its own separate dataset. 
+Therefore, multiple calculations on the same Matrix object will not corrupt its data in any way.
+(unless of course one uses a derived class that invokes the Matrix#set method)
