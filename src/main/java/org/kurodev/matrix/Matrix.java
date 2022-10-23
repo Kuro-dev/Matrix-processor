@@ -596,7 +596,7 @@ public class Matrix {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (isReal) {
-                    isReal = get(x, y) > 0;
+                    isReal = get(x, y) >= 0;
                 } else {
                     break;
                 }
