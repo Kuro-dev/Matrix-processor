@@ -19,7 +19,7 @@ public class ErrorMatrix extends Matrix {
     }
 
     @Override
-    public Matrix multiply(double factor) {
+    public Matrix multiply(double scalar) {
         throw new UnsupportedOperationException(message);
     }
 

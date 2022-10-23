@@ -11,6 +11,7 @@ public class Matrix {
     private final int width;
     private final int height;
     private final double[][] matrix;
+    private Double determinant = null;
 
     public Matrix(int width, int height) {
         this(width, height, new double[height][width]);
@@ -96,6 +97,17 @@ public class Matrix {
         return of(dataSet);
     }
 
+    public static Matrix identityMatrix(int size) {
+        var out = new Matrix(size, size);
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                if (x == y) out.set(1, x, y);
+                else out.set(0, x, y);
+            }
+        }
+        return out;
+    }
+
     public static Matrix of(byte[] data) {
         byte[] buf = new byte[Double.BYTES];
         System.arraycopy(data, 0, buf, 0, Integer.BYTES);
@@ -174,6 +186,7 @@ public class Matrix {
     }
 
     void set(double val, int x, int y) {
+        determinant = null;
         matrix[y][x] = val;
     }
 
@@ -206,14 +219,14 @@ public class Matrix {
     /**
      * Multiplies every value in the matrix by the given factor.
      *
-     * @param factor The multiplicator
+     * @param scalar The multiplicator
      * @return A new matrix with the multiplied values
      */
-    public Matrix multiply(double factor) {
+    public Matrix multiply(double scalar) {
         Matrix out = new Matrix(width, height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                out.set(get(x, y) * factor, x, y);
+                out.set(get(x, y) * scalar, x, y);
             }
         }
         return out;
@@ -296,20 +309,24 @@ public class Matrix {
      * <p>May return {@link Double#NaN}</p>
      */
     public double getDeterminant() {
-        if (width == height) {
-            if (width == 2) {
-                return (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
-            } else {
-                double result = 0;
-                for (int x = 0; x < width; x++) {
-                    int factor = (x & 1) == 0 ? 1 : -1;
-                    double val = get(x, 0);
-                    result += (val * getCofactor(x)) * factor;
+        if (determinant == null) {
+            if (width == height) {
+                if (width == 2) {
+                    determinant = (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
+                } else {
+                    double result = 0;
+                    for (int x = 0; x < width; x++) {
+                        int factor = (x & 1) == 0 ? 1 : -1;
+                        double val = get(x, 0);
+                        result += (val * getCofactor(x)) * factor;
+                    }
+                    determinant = result;
                 }
-                return result;
+            } else {
+                determinant = Double.NaN;
             }
         }
-        return Double.NaN;
+        return determinant;
     }
 
     /**
@@ -407,6 +424,7 @@ public class Matrix {
     /**
      * @see #equals(Object, double)
      */
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object obj) {
         return equals(obj, 0.01d);
