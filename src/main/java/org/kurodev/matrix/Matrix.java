@@ -28,6 +28,15 @@ public class Matrix {
     }
 
     /**
+     * @param n Width of the matrix
+     * @param rng   Random instance
+     * @return A randomized instance
+     */
+    public static Matrix of(int n, Random rng) {
+        return of(n, n, rng);
+    }
+
+    /**
      * @param width  Width of the matrix
      * @param height Height of the matrix
      * @param rng    Random instance
@@ -618,5 +627,44 @@ public class Matrix {
             }
         }
         return determinant;
+    }
+
+    public LuDecomp decompose() {
+        if (width != height) {
+            var err = error("Must be a square matrix");
+            return new LuDecomp(err, err);
+        }
+        int n = this.width;
+        var upper = copy(false);
+        var lower = copy(false);
+        // Decomposing matrix into Upper and Lower
+        // triangular matrix
+        for (int i = 0; i < n; i++) {
+            // Upper Triangular
+            for (int k = i; k < n; k++) {
+                // Summation of L(i, j) * U(j, k)
+                int sum = 0;
+                for (int j = 0; j < i; j++)
+                    sum += (lower.get(i, j) * upper.get(j, k));
+                // Evaluating U(i, k)
+                upper.set(get(i, k) - sum, i, k);
+            }
+            // Lower Triangular
+            for (int k = i; k < n; k++) {
+                if (i == k)
+                    lower.set(1, i, i);
+                    // Diagonal as 1
+                else {
+                    // Summation of L(k, j) * U(j, i)
+                    int sum = 0;
+                    for (int j = 0; j < i; j++)
+                        sum += (lower.get(k, i) * upper.get(j, i));
+
+                    // Evaluating L(k, i)
+                    lower.set(get(k, i) - sum / upper.get(i, i), k, i);
+                }
+            }
+        }
+        return new LuDecomp(upper, lower);
     }
 }
