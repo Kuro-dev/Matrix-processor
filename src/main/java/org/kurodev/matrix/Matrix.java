@@ -28,6 +28,15 @@ public class Matrix {
     }
 
     /**
+     * @param n Width of the matrix
+     * @param rng   Random instance
+     * @return A randomized instance
+     */
+    public static Matrix of(int n, Random rng) {
+        return of(n, n, rng);
+    }
+
+    /**
      * @param width  Width of the matrix
      * @param height Height of the matrix
      * @param rng    Random instance
@@ -111,6 +120,14 @@ public class Matrix {
         return out;
     }
 
+    /**
+     * Create a matrix from serialized matrix data.
+     * Deserializes the resulting byte array from {@link #toByteArray()}
+     *
+     * @param data The bytes that contains this matrix's data
+     * @return a Matrix
+     * @see #toByteArray()
+     */
     public static Matrix of(byte[] data) {
         byte[] buf = new byte[Double.BYTES];
         System.arraycopy(data, 0, buf, 0, Integer.BYTES);
@@ -126,7 +143,6 @@ public class Matrix {
         Matrix result = new Matrix(width, height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int dataPos = ((x * height) + y) * Double.BYTES;
                 System.arraycopy(data, pos, buf, 0, Double.BYTES);
                 pos += Double.BYTES;
                 double value = ByteUtils.toDouble(buf);
@@ -316,33 +332,6 @@ public class Matrix {
     }
 
     /**
-     * @return The determinant of the given matrix or {@link Double#NaN} if it cannot be computed.
-     * A determinant can only be computed if:
-     * <p>The width and height of the matrix are equal</p>
-     * <p>May return {@link Double#NaN}</p>
-     */
-    public double getDeterminant() {
-        if (determinant == null) {
-            if (width == height) {
-                if (width == 2) {
-                    determinant = (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
-                } else {
-                    double result = 0;
-                    for (int x = 0; x < width; x++) {
-                        int factor = (x & 1) == 0 ? 1 : -1;
-                        double val = get(x, 0);
-                        result += (val * getCofactor(x)) * factor;
-                    }
-                    determinant = result;
-                }
-            } else {
-                determinant = Double.NaN;
-            }
-        }
-        return determinant;
-    }
-
-    /**
      * Generates a minor matrix of dimension x-1/y-1
      *
      * @param excludedX The row to exclude from the old matrix when copying values
@@ -447,7 +436,7 @@ public class Matrix {
     }
 
     /**
-     * @param other     other object to compare to
+     * @param other other object to compare to
      * @param delta the allowed divergence between 2 different matrix values. higher values mean less accuracy.
      *              Default: {@code 0.01d}
      * @return true if the 2 objects are equal given the delta
@@ -485,6 +474,7 @@ public class Matrix {
     }
 
     //untested
+
     public void sigmoid() {
         Matrix temp = copy(false);
         for (int y = 0; y < height; y++) {
@@ -493,8 +483,8 @@ public class Matrix {
             }
         }
     }
-
     //untested
+
     public void dsigmoid() {
         Matrix temp = copy(false);
         for (int y = 0; y < height; y++) {
@@ -603,5 +593,78 @@ public class Matrix {
             }
         }
         return isReal;
+    }
+
+    /**
+     * @return The determinant of the given matrix or {@link Double#NaN} if it cannot be computed.
+     * A determinant can only be computed if:
+     * <p>The width and height of the matrix are equal</p>
+     * <p>May return {@link Double#NaN}</p>
+     */
+    public double getDeterminant() {
+        if (determinant == null) {
+            if (width == height) {
+                if (width == 2) {
+                    determinant = (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
+                } else {
+                    List<Matrix> minors = new ArrayList<>(width);
+                    for (int x = 0; x < width; x++) {
+                        minors.add(getMinor(x));
+                    }
+                    //precompute determinants of minors asynchronously
+                    minors.parallelStream().forEach(Matrix::getDeterminant);
+
+                    double result = 0;
+                    for (int x = 0; x < width; x++) {
+                        int factor = (x & 1) == 0 ? 1 : -1;
+                        double val = get(x, 0);
+                        result += (val * minors.get(x).getDeterminant()) * factor;
+                    }
+                    determinant = result;
+                }
+            } else {
+                determinant = Double.NaN;
+            }
+        }
+        return determinant;
+    }
+
+    public LuDecomp decompose() {
+        if (width != height) {
+            var err = error("Must be a square matrix");
+            return new LuDecomp(err, err);
+        }
+        int n = this.width;
+        var upper = copy(false);
+        var lower = copy(false);
+        // Decomposing matrix into Upper and Lower
+        // triangular matrix
+        for (int i = 0; i < n; i++) {
+            // Upper Triangular
+            for (int k = i; k < n; k++) {
+                // Summation of L(i, j) * U(j, k)
+                int sum = 0;
+                for (int j = 0; j < i; j++)
+                    sum += (lower.get(i, j) * upper.get(j, k));
+                // Evaluating U(i, k)
+                upper.set(get(i, k) - sum, i, k);
+            }
+            // Lower Triangular
+            for (int k = i; k < n; k++) {
+                if (i == k)
+                    lower.set(1, i, i);
+                    // Diagonal as 1
+                else {
+                    // Summation of L(k, j) * U(j, i)
+                    int sum = 0;
+                    for (int j = 0; j < i; j++)
+                        sum += (lower.get(k, i) * upper.get(j, i));
+
+                    // Evaluating L(k, i)
+                    lower.set(get(k, i) - sum / upper.get(i, i), k, i);
+                }
+            }
+        }
+        return new LuDecomp(upper, lower);
     }
 }
