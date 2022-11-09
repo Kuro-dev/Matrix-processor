@@ -26,7 +26,8 @@ public class PerformanceTest {
     @Test(timeout = 1000)
     public void calculateBigMatrixDeterminant() {
         Matrix rand = Matrix.of(10, 10, RNG);
-        assertEquals(-0.00824978878646706d, rand.getDeterminant(), 0.000000000000000000000001);
+        assertEquals(-0.00824978878646706d, rand.getDeterminant(), 0.000000000000000000000001d);
+        assertEquals(-8.44778371734227d, rand.multiply(2).getDeterminant(), 0.000000000000000000000001d);
     }
 
     @Test
@@ -36,7 +37,7 @@ public class PerformanceTest {
             Matrix multiplied = matrix.multiply(scalar);
             assertNotEquals(matrix, multiplied);
             var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
-            assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001);
+            assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001d);
         }
     }
 
@@ -59,7 +60,7 @@ public class PerformanceTest {
         assertEquals(27d, matrix.getDeterminant(), 0);
         var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
 
-        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001);
+        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001d);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class PerformanceTest {
         assertEquals(216d, matrix.getDeterminant(), 0);
         var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
 
-        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001);
+        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001d);
     }
 
     @Test
@@ -88,7 +89,7 @@ public class PerformanceTest {
             multiplied = matrix.multiply(scalar);
             assertNotEquals(matrix, multiplied);
             var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
-            assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001);
+            assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001d);
         }
     }
 
