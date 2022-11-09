@@ -432,9 +432,6 @@ public class Matrix {
         return adjoint;
     }
 
-    /**
-     * @see #equals(Object, double)
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -480,27 +477,6 @@ public class Matrix {
      */
     public double[] toArray() {
         return Stream.of(matrix).flatMapToDouble(DoubleStream::of).toArray();
-    }
-
-    //untested
-
-    public void sigmoid() {
-        Matrix temp = copy(false);
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                temp.set(1 / (1 + Math.exp(-get(x, y))), x, y);
-            }
-        }
-    }
-    //untested
-
-    public void dsigmoid() {
-        Matrix temp = copy(false);
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                temp.set(get(x, y) * (1 - get(x, y)), x, y);
-            }
-        }
     }
 
     @Override
