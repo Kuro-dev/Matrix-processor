@@ -28,8 +28,8 @@ public class Matrix {
     }
 
     /**
-     * @param n Width of the matrix
-     * @param rng   Random instance
+     * @param n   Width of the matrix
+     * @param rng Random instance
      * @return A randomized instance
      */
     public static Matrix of(int n, Random rng) {
@@ -237,6 +237,10 @@ public class Matrix {
 
     /**
      * Multiplies every value in the matrix by the given factor.
+     * <p>
+     * Given that A is an n×n matrix and given a scalar α
+     * <p>
+     * {@code det(α*A) = α^n * det(A)}
      *
      * @param scalar The multiplicator
      * @return A new matrix with the multiplied values
@@ -247,6 +251,11 @@ public class Matrix {
             for (int x = 0; x < width; x++) {
                 out.set(get(x, y) * scalar, x, y);
             }
+        }
+        //precompute the determinant to reduce performance impact
+        //only precompute IF the determinant for this matrix has been computed before.
+        if (determinant != null && !Double.isNaN(determinant) && height == width) {
+            out.determinant = Math.pow(scalar, width) * determinant;
         }
         return out;
     }

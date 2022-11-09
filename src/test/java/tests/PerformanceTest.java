@@ -1,7 +1,6 @@
 package tests;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kurodev.matrix.Matrix;
 
@@ -36,14 +35,17 @@ public class PerformanceTest {
         for (int scalar = 2; scalar < 3; scalar++) {
             Matrix multiplied = matrix.multiply(scalar);
             assertNotEquals(matrix, multiplied);
-            var assumedDeterminant = Math.pow(matrix.getWidth(), scalar) * matrix.getDeterminant();
+            var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
             assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001);
         }
     }
 
 
+    /**
+     * Given that A is an n×n matrix and given a scalar α
+     * det(α*A)=α^n * det(A)
+     */
     @Test
-    @Ignore
     public void calculateScalarDeterminant3x3() {
         double[][] data = {
                 {2d, 3d, 4d},
@@ -51,11 +53,30 @@ public class PerformanceTest {
                 {8d, 9d, 1d}
         };
         Matrix matrix = Matrix.of(data);
-        final int scalar = 2;
+        final double scalar = 2d;
         Matrix multiplied = matrix.multiply(scalar);
         assertNotEquals(matrix, multiplied);
-        var assumedDeterminant = Math.pow(matrix.getWidth(), scalar) * matrix.getDeterminant();
-        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001);
+        assertEquals(27d, matrix.getDeterminant(), 0);
+        var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
+
+        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001);
+    }
+
+    @Test
+    public void calculateScalarDeterminantReverse3x3() {
+        double[][] data = {
+                {4d, 6d, 8d},
+                {10d, 12d, 14d},
+                {16d, 18d, 2d}
+        };
+        Matrix matrix = Matrix.of(data);
+        final double scalar = 0.5;
+        Matrix multiplied = matrix.multiply(scalar);
+        assertNotEquals(matrix, multiplied);
+        assertEquals(216d, matrix.getDeterminant(), 0);
+        var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
+
+        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001);
     }
 
     @Test
@@ -66,7 +87,7 @@ public class PerformanceTest {
         for (int i = 0; i < 30; i++) {
             multiplied = matrix.multiply(scalar);
             assertNotEquals(matrix, multiplied);
-            var assumedDeterminant = Math.pow(matrix.getWidth(), scalar) * matrix.getDeterminant();
+            var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
             assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001);
         }
     }
