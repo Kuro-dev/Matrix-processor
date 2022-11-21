@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kurodev.matrix.Matrix;
 
+import java.lang.reflect.Field;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -65,20 +66,32 @@ public class PerformanceTest {
     }
 
     @Test
-    public void calculateDeterminantInMatrixCalculation() {
+    public void calculateDeterminantInMatrixCalculation() throws NoSuchFieldException, IllegalAccessException {
         Matrix a = Matrix.of(4, 4, RNG);
         Matrix b = Matrix.of(4, 4, RNG);
         assertFalse(Double.isNaN(a.getDeterminant()));
         assertFalse(Double.isNaN(b.getDeterminant()));
+        assertEquals(0.006853144421231382, a.getDeterminant(), DELTA);
+        assertEquals(-0.01965642725934563, b.getDeterminant(), DELTA);
         double assumedDeterminant = a.getDeterminant() * b.getDeterminant();
-        double precisionTrue1 = 0.0000000000000001;
-        double precisionFalse = 0.00000000000000001;
+        double precisionTrue = 1.0E-16;
+        double precisionFalse = 1.0E-17;
 
         var result = a.multiply(b);
 
-        assertEquals(assumedDeterminant, result.getDeterminant(), precisionTrue1);
+        assertEquals(assumedDeterminant, result.getDeterminant(), 0);
+
+        //remove precomputed determinant from object
+        Field f = a.getClass().getDeclaredField("determinant");
+        f.setAccessible(true);
+        f.set(result, null);
+        f.setAccessible(false);
+        double calculatedDeterminant = result.getDeterminant();
+
         //small rounding issue, due to double bit limitations and rounding.
-        assertNotEquals(assumedDeterminant, result.getDeterminant(), precisionFalse);
+        assertEquals(assumedDeterminant, calculatedDeterminant, precisionTrue);
+        assertNotEquals(assumedDeterminant, calculatedDeterminant, precisionFalse);
+
     }
 
     @Test

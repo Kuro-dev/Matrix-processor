@@ -279,11 +279,18 @@ public class Matrix {
                     output.set(multiply(row, column), x, y);
                 }
             }
+            if (hasDeterminant() && other.hasDeterminant()) {
+                output.determinant = determinant * other.determinant;
+            }
             return output;
         } else if (other.checkForMultiply(this)) {
             return other.multiply(this);
         }
         return error("Width and height do not match.");
+    }
+
+    private boolean hasDeterminant() {
+        return determinant != null && !determinant.isNaN();
     }
 
     private double multiply(double[] row, double[] column) {
