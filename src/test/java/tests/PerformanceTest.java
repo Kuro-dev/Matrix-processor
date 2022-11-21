@@ -9,6 +9,7 @@ import java.util.Random;
 import static org.junit.Assert.*;
 
 public class PerformanceTest {
+    private static final double DELTA = 0.000000000000000001d;
     private static Random RNG;
 
     @Before
@@ -26,8 +27,8 @@ public class PerformanceTest {
     @Test(timeout = 1000)
     public void calculateBigMatrixDeterminant() {
         Matrix rand = Matrix.of(10, 10, RNG);
-        assertEquals(-0.00824978878646706d, rand.getDeterminant(), 0.000000000000000000000001d);
-        assertEquals(-8.44778371734227d, rand.multiply(2).getDeterminant(), 0.000000000000000000000001d);
+        assertEquals(-0.00824978878646706d, rand.getDeterminant(), DELTA);
+        assertEquals(-8.44778371734227d, rand.multiply(2).getDeterminant(), DELTA);
     }
 
     @Test
@@ -37,7 +38,7 @@ public class PerformanceTest {
             Matrix multiplied = matrix.multiply(scalar);
             assertNotEquals(matrix, multiplied);
             var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
-            assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001d);
+            assertEquals(assumedDeterminant, multiplied.getDeterminant(), DELTA);
         }
     }
 
@@ -60,7 +61,24 @@ public class PerformanceTest {
         assertEquals(27d, matrix.getDeterminant(), 0);
         var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
 
-        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001d);
+        assertEquals(assumedDeterminant, multiplied.getDeterminant(), DELTA);
+    }
+
+    @Test
+    public void calculateDeterminantInMatrixCalculation() {
+        Matrix a = Matrix.of(4, 4, RNG);
+        Matrix b = Matrix.of(4, 4, RNG);
+        assertFalse(Double.isNaN(a.getDeterminant()));
+        assertFalse(Double.isNaN(b.getDeterminant()));
+        double assumedDeterminant = a.getDeterminant() * b.getDeterminant();
+        double precisionTrue1 = 0.0000000000000001;
+        double precisionFalse = 0.00000000000000001;
+
+        var result = a.multiply(b);
+
+        assertEquals(assumedDeterminant, result.getDeterminant(), precisionTrue1);
+        //small rounding issue, due to double bit limitations and rounding.
+        assertNotEquals(assumedDeterminant, result.getDeterminant(), precisionFalse);
     }
 
     @Test
@@ -77,7 +95,7 @@ public class PerformanceTest {
         assertEquals(216d, matrix.getDeterminant(), 0);
         var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
 
-        assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000001d);
+        assertEquals(assumedDeterminant, multiplied.getDeterminant(), DELTA);
     }
 
     @Test
@@ -89,7 +107,7 @@ public class PerformanceTest {
             multiplied = matrix.multiply(scalar);
             assertNotEquals(matrix, multiplied);
             var assumedDeterminant = Math.pow(scalar, matrix.getWidth()) * matrix.getDeterminant();
-            assertEquals(assumedDeterminant, multiplied.getDeterminant(), 0.000000000000000000001d);
+            assertEquals(assumedDeterminant, multiplied.getDeterminant(), DELTA);
         }
     }
 
