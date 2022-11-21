@@ -254,7 +254,7 @@ public class Matrix {
         }
         //precompute the determinant to reduce performance impact
         //only precompute IF the determinant for this matrix has been computed before.
-        if (determinant != null && !Double.isNaN(determinant) && height == width) {
+        if (hasDeterminant() && height == width) {
             out.determinant = Math.pow(scalar, width) * determinant;
         }
         return out;
