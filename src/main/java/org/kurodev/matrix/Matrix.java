@@ -28,6 +28,15 @@ public class Matrix {
     }
 
     /**
+     * @param n   Width of the matrix
+     * @param rng Random instance
+     * @return A randomized instance
+     */
+    public static Matrix of(int n, Random rng) {
+        return of(n, n, rng);
+    }
+
+    /**
      * @param width  Width of the matrix
      * @param height Height of the matrix
      * @param rng    Random instance
@@ -111,6 +120,14 @@ public class Matrix {
         return out;
     }
 
+    /**
+     * Create a matrix from serialized matrix data.
+     * Deserializes the resulting byte array from {@link #toByteArray()}
+     *
+     * @param data The bytes that contains this matrix's data
+     * @return a Matrix
+     * @see #toByteArray()
+     */
     public static Matrix of(byte[] data) {
         byte[] buf = new byte[Double.BYTES];
         System.arraycopy(data, 0, buf, 0, Integer.BYTES);
@@ -126,7 +143,6 @@ public class Matrix {
         Matrix result = new Matrix(width, height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int dataPos = ((x * height) + y) * Double.BYTES;
                 System.arraycopy(data, pos, buf, 0, Double.BYTES);
                 pos += Double.BYTES;
                 double value = ByteUtils.toDouble(buf);
@@ -221,6 +237,10 @@ public class Matrix {
 
     /**
      * Multiplies every value in the matrix by the given factor.
+     * <p>
+     * Given that A is an n×n matrix and given a scalar α
+     * <p>
+     * {@code det(α*A) = α^n * det(A)}
      *
      * @param scalar The multiplicator
      * @return A new matrix with the multiplied values
@@ -231,6 +251,11 @@ public class Matrix {
             for (int x = 0; x < width; x++) {
                 out.set(get(x, y) * scalar, x, y);
             }
+        }
+        //precompute the determinant to reduce performance impact
+        //only precompute IF the determinant for this matrix has been computed before.
+        if (hasDeterminant() && height == width) {
+            out.determinant = Math.pow(scalar, width) * determinant;
         }
         return out;
     }
@@ -254,11 +279,18 @@ public class Matrix {
                     output.set(multiply(row, column), x, y);
                 }
             }
+            if (hasDeterminant() && other.hasDeterminant()) {
+                output.determinant = determinant * other.determinant;
+            }
             return output;
         } else if (other.checkForMultiply(this)) {
             return other.multiply(this);
         }
         return error("Width and height do not match.");
+    }
+
+    private boolean hasDeterminant() {
+        return determinant != null && !determinant.isNaN();
     }
 
     private double multiply(double[] row, double[] column) {
@@ -313,33 +345,6 @@ public class Matrix {
         else {
             return error("Matrix width and height must be the same");
         }
-    }
-
-    /**
-     * @return The determinant of the given matrix or {@link Double#NaN} if it cannot be computed.
-     * A determinant can only be computed if:
-     * <p>The width and height of the matrix are equal</p>
-     * <p>May return {@link Double#NaN}</p>
-     */
-    public double getDeterminant() {
-        if (determinant == null) {
-            if (width == height) {
-                if (width == 2) {
-                    determinant = (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
-                } else {
-                    double result = 0;
-                    for (int x = 0; x < width; x++) {
-                        int factor = (x & 1) == 0 ? 1 : -1;
-                        double val = get(x, 0);
-                        result += (val * getCofactor(x)) * factor;
-                    }
-                    determinant = result;
-                }
-            } else {
-                determinant = Double.NaN;
-            }
-        }
-        return determinant;
     }
 
     /**
@@ -434,9 +439,6 @@ public class Matrix {
         return adjoint;
     }
 
-    /**
-     * @see #equals(Object, double)
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -447,7 +449,7 @@ public class Matrix {
     }
 
     /**
-     * @param other     other object to compare to
+     * @param other other object to compare to
      * @param delta the allowed divergence between 2 different matrix values. higher values mean less accuracy.
      *              Default: {@code 0.01d}
      * @return true if the 2 objects are equal given the delta
@@ -482,26 +484,6 @@ public class Matrix {
      */
     public double[] toArray() {
         return Stream.of(matrix).flatMapToDouble(DoubleStream::of).toArray();
-    }
-
-    //untested
-    public void sigmoid() {
-        Matrix temp = copy(false);
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                temp.set(1 / (1 + Math.exp(-get(x, y))), x, y);
-            }
-        }
-    }
-
-    //untested
-    public void dsigmoid() {
-        Matrix temp = copy(false);
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                temp.set(get(x, y) * (1 - get(x, y)), x, y);
-            }
-        }
     }
 
     @Override
@@ -604,4 +586,39 @@ public class Matrix {
         }
         return isReal;
     }
+
+    /**
+     * @return The determinant of the given matrix or {@link Double#NaN} if it cannot be computed.
+     * A determinant can only be computed if:
+     * <p>The width and height of the matrix are equal</p>
+     * <p>May return {@link Double#NaN}</p>
+     */
+    public double getDeterminant() {
+        if (determinant == null) {
+            if (width == height) {
+                if (width == 2) {
+                    determinant = (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
+                } else {
+                    List<Matrix> minors = new ArrayList<>(width);
+                    for (int x = 0; x < width; x++) {
+                        minors.add(getMinor(x));
+                    }
+                    //precompute determinants of minors asynchronously
+                    minors.parallelStream().forEach(Matrix::getDeterminant);
+
+                    double result = 0;
+                    for (int x = 0; x < width; x++) {
+                        int factor = (x & 1) == 0 ? 1 : -1;
+                        double val = get(x, 0);
+                        result += (val * minors.get(x).getDeterminant()) * factor;
+                    }
+                    determinant = result;
+                }
+            } else {
+                determinant = Double.NaN;
+            }
+        }
+        return determinant;
+    }
+
 }
