@@ -26,4 +26,12 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Matrix calculator by Kuro-dev</name>
+            <url>https://maven.pkg.github.com/kuro-dev/Matrix-processor</url>
+        </repository>
+    </distributionManagement>
+
 </project>
