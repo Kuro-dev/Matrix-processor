@@ -22,7 +22,7 @@ public class ExampleAsyncDeterminant {
     public void calcDeterminant() {
         AsynchronousDeterminantCalculationMatrix example = AsynchronousDeterminantCalculationMatrix.of(10, RNG);
         assertTrue(example.isCalculatingDeterminant());
-        assertEquals(-0.00824978878646706d, example.getDeterminant(), 0.000000000000000000000001);
+        assertEquals(-0.008249788786467094, example.getDeterminant(), 0.000000000000000000000001);
         assertFalse(example.isCalculatingDeterminant());
     }
 }

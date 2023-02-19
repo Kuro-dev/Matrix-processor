@@ -595,24 +595,17 @@ public class Matrix {
      */
     public double getDeterminant() {
         if (determinant == null) {
-            if (width == height) {
+            if (isSquare()) {
                 if (width == 2) {
                     determinant = (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
                 } else {
-                    List<Matrix> minors = new ArrayList<>(width);
-                    for (int x = 0; x < width; x++) {
-                        minors.add(getMinor(x));
+                    Matrix lu = calculateLUDecomposition();
+                    double det = 1.0;
+                    // Calculate determinant from LU decomposition
+                    for (int i = 0; i < width; i++) {
+                        det *= lu.get(i, i);
                     }
-                    //precompute determinants of minors asynchronously
-                    minors.parallelStream().forEach(Matrix::getDeterminant);
-
-                    double result = 0;
-                    for (int x = 0; x < width; x++) {
-                        int factor = (x & 1) == 0 ? 1 : -1;
-                        double val = get(x, 0);
-                        result += (val * minors.get(x).getDeterminant()) * factor;
-                    }
-                    determinant = result;
+                    determinant = det;
                 }
             } else {
                 determinant = Double.NaN;
@@ -621,4 +614,40 @@ public class Matrix {
         return determinant;
     }
 
+    public final boolean isSquare() {
+        return width == height;
+    }
+
+    /**
+     * Calculates the LU decomposition of this matrix
+     *
+     * @return the new instance
+     * @apiNote May return an {@link ErrorMatrix} if the matrix is not square.
+     * @see #isError()
+     */
+    public Matrix calculateLUDecomposition() {
+        if (isSquare()) {
+            int n = width;
+
+            // Create LU decomposition matrix
+            double[][] lu = new double[n][n];
+            for (int i = 0; i < n; i++) {
+                System.arraycopy(matrix[i], 0, lu[i], 0, n);
+            }
+
+            // Perform LU decomposition
+            for (int k = 0; k < n - 1; k++) {
+                for (int i = k + 1; i < n; i++) {
+                    double factor = lu[i][k] / lu[k][k];
+                    for (int j = k + 1; j < n; j++) {
+                        lu[i][j] -= factor * lu[k][j];
+                    }
+                    lu[i][k] = factor;
+                }
+            }
+            return of(lu);
+        }
+        return error("LU decomposition cannot be done with non-square matrices");
+    }
 }
+
