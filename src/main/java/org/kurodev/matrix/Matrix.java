@@ -636,16 +636,16 @@ public class Matrix {
             }
 
             // Perform LU decomposition
-            for (int k = 0; k < n - 1; k++) {
-                for (int i = k + 1; i < n; i++) {
-                    double factor = lu[i][k] / lu[k][k];
-                    for (int j = k + 1; j < n; j++) {
-                        lu[i][j] -= factor * lu[k][j];
+            for (int y = 0; y < n - 1; y++) {
+                for (int x = y + 1; x < n; x++) {
+                    double factor = lu[x][y] / lu[y][y];
+                    for (int i = y + 1; i < n; i++) {
+                        lu[x][i] -= factor * lu[y][i];
                     }
-                    lu[i][k] = factor;
+                    lu[x][y] = factor;
                 }
             }
-            return of(lu);
+            return Matrix.of(lu);
         }
         return error("LU decomposition cannot be done with non-square matrices");
     }
