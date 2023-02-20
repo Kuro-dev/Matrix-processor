@@ -28,8 +28,8 @@ public class PerformanceTest {
     @Test(timeout = 1000)
     public void calculateBigMatrixDeterminant() {
         Matrix rand = Matrix.of(10, 10, RNG);
-        assertEquals(-0.008249788786467094, rand.getDeterminant(), DELTA);
-        assertEquals(-8.447783717342304, rand.multiply(2).getDeterminant(), DELTA);
+        assertEquals(-0.008249788786467078, rand.getDeterminant(), DELTA);
+        assertEquals(-8.447783717342288, rand.multiply(2).getDeterminant(), DELTA);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class PerformanceTest {
         Matrix b = Matrix.of(4, 4, RNG);
         assertFalse(Double.isNaN(a.getDeterminant()));
         assertFalse(Double.isNaN(b.getDeterminant()));
-        assertEquals(0.006853144421231377, a.getDeterminant(), DELTA);
+        assertEquals(0.006853144421231317, a.getDeterminant(), DELTA);
         assertEquals(-0.019656427259345577, b.getDeterminant(), DELTA);
         double assumedDeterminant = a.getDeterminant() * b.getDeterminant();
 
@@ -87,8 +87,8 @@ public class PerformanceTest {
         f.setAccessible(false);
         double calculatedDeterminant = result.getDeterminant();
 
-        double precisionTrue = 1.0E-18;
-        double precisionFalse = 1.0E-19;
+        double precisionTrue = 1.0E-17;
+        double precisionFalse = 1.0E-18;
         //small rounding issue, due to double bit limitations and rounding.
         assertEquals(assumedDeterminant, calculatedDeterminant, precisionTrue);
         assertNotEquals(assumedDeterminant, calculatedDeterminant, precisionFalse);

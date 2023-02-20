@@ -599,12 +599,13 @@ public class Matrix {
                 if (width == 2) {
                     determinant = (get(0, 0) * get(1, 1)) - (get(1, 0) * get(0, 1));
                 } else {
-                    Matrix lu = calculateLUDecomposition();
-                    double det = 1.0;
-                    // Calculate determinant from LU decomposition
-                    for (int i = 0; i < width; i++) {
-                        det *= lu.get(i, i);
+                    LUDecomposition lu = calculateLUDecomposition();
+                    Matrix u = lu.u();
+                    double det = 1.0d;
+                    for (int i = 0; i < u.width; i++) {
+                        det *= u.get(i, i);
                     }
+                    det *= lu.parity();
                     determinant = det;
                 }
             } else {
@@ -618,6 +619,12 @@ public class Matrix {
         return width == height;
     }
 
+    private void swapRows(int i, int j) {
+        double[] temp = matrix[i];
+        matrix[i] = matrix[j];
+        matrix[j] = temp;
+    }
+
     /**
      * Calculates the LU decomposition of this matrix
      *
@@ -625,29 +632,49 @@ public class Matrix {
      * @apiNote May return an {@link ErrorMatrix} if the matrix is not square.
      * @see #isError()
      */
-    public Matrix calculateLUDecomposition() {
-        if (isSquare()) {
-            int n = width;
+    public LUDecomposition calculateLUDecomposition() {
+        if (!isSquare()) {
+            throw new IllegalArgumentException("LU decomposition cannot be done with non-square matrices");
+        }
 
-            // Create LU decomposition matrix
-            double[][] lu = new double[n][n];
-            for (int i = 0; i < n; i++) {
-                System.arraycopy(matrix[i], 0, lu[i], 0, n);
-            }
+        int n = width;
+        Matrix l = Matrix.identityMatrix(n);
+        Matrix u = copy(true);
+        int[] pivots = new int[n];
+        int parity = 1;
 
-            // Perform LU decomposition
-            for (int y = 0; y < n - 1; y++) {
-                for (int x = y + 1; x < n; x++) {
-                    double factor = lu[x][y] / lu[y][y];
-                    for (int i = y + 1; i < n; i++) {
-                        lu[x][i] -= factor * lu[y][i];
-                    }
-                    lu[x][y] = factor;
+        for (int k = 0; k < n - 1; k++) {
+            int p = k;
+            for (int i = k + 1; i < n; i++) {
+                if (Math.abs(u.get(i, k)) > Math.abs(u.get(p, k))) {
+                    p = i;
                 }
             }
-            return Matrix.of(lu);
+
+            if (p != k) {
+                u.swapRows(p, k);
+                l.swapRows(p, k);
+                int temp = pivots[p];
+                pivots[p] = pivots[k];
+                pivots[k] = temp;
+                parity = -parity;
+            }
+
+            double pivot = u.get(k, k);
+            if (pivot == 0) {
+                throw new IllegalArgumentException("Matrix is singular");
+            }
+
+            for (int i = k + 1; i < n; i++) {
+                double factor = u.get(i, k) / pivot;
+                l.set(factor, i, k);
+                for (int j = k; j < n; j++) {
+                    u.set(u.get(i, j) - factor * u.get(k, j), i, j);
+                }
+            }
         }
-        return error("LU decomposition cannot be done with non-square matrices");
+
+        return new LUDecomposition(l, u, pivots, parity);
     }
 }
 
