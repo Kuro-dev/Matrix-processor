@@ -25,7 +25,7 @@ public enum TranspositionType implements Function<Matrix, Matrix> {
         @SuppressWarnings("SuspiciousNameCombination")
             //this works as intended.
         void setValue(Matrix out, double val, int x, int y) {
-            out.set(val, y, x);
+            out.set(y, x, val);
         }
     },
 
@@ -42,7 +42,7 @@ public enum TranspositionType implements Function<Matrix, Matrix> {
      */
     SIDE_DIAGONAL {
         void setValue(Matrix out, double val, int x, int y) {
-            out.set(val, out.getWidth() - (1 + y), out.getHeight() - (1 + x));
+            out.set(out.getWidth() - (1 + y), out.getHeight() - (1 + x), val);
         }
     },
     /**
@@ -58,7 +58,7 @@ public enum TranspositionType implements Function<Matrix, Matrix> {
      */
     VERTICAL_LINE {
         void setValue(Matrix out, double val, int x, int y) {
-            out.set(val, out.getWidth() - (1 + x), y);
+            out.set(out.getWidth() - (1 + x), y, val);
         }
     },
     /**
@@ -74,7 +74,7 @@ public enum TranspositionType implements Function<Matrix, Matrix> {
      */
     HORIZONTAL_LINE {
         void setValue(Matrix out, double val, int x, int y) {
-            out.set(val, x, out.getHeight() - (1 + y));
+            out.set(x, out.getHeight() - (1 + y), val);
         }
     };
 

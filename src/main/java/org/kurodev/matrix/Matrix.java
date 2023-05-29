@@ -113,8 +113,8 @@ public class Matrix {
         var out = new Matrix(size, size);
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                if (x == y) out.set(1, x, y);
-                else out.set(0, x, y);
+                if (x == y) out.set(x, y, 1);
+                else out.set(x, y, 0);
             }
         }
         return out;
@@ -146,7 +146,7 @@ public class Matrix {
                 System.arraycopy(data, pos, buf, 0, Double.BYTES);
                 pos += Double.BYTES;
                 double value = ByteUtils.toDouble(buf);
-                result.set(value, x, y);
+                result.set(x, y, value);
             }
         }
         return result;
@@ -195,7 +195,7 @@ public class Matrix {
             Matrix output = new Matrix(width, height);
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    output.set(get(x, y) + other.get(x, y), x, y);
+                    output.set(x, y, get(x, y) + other.get(x, y));
                 }
             }
             return output;
@@ -204,7 +204,7 @@ public class Matrix {
                 + getDimension() + " != " + other.getDimension());
     }
 
-    protected final void set(double val, int x, int y) {
+    protected final void set(int x, int y, double val) {
         determinant = null;
         matrix[y][x] = val;
     }
@@ -249,7 +249,7 @@ public class Matrix {
         Matrix out = new Matrix(width, height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                out.set(get(x, y) * scalar, x, y);
+                out.set(x, y, get(x, y) * scalar);
             }
         }
         //precompute the determinant to reduce performance impact
@@ -258,6 +258,10 @@ public class Matrix {
             out.determinant = Math.pow(scalar, width) * determinant;
         }
         return out;
+    }
+
+    private boolean hasDeterminant() {
+        return determinant != null && !determinant.isNaN();
     }
 
     /**
@@ -276,7 +280,11 @@ public class Matrix {
                 double[] row = getRow(y);
                 for (int x = 0; x < other.width; x++) {
                     double[] column = other.getColumn(x);
-                    output.set(multiply(row, column), x, y);
+                    double dotProduct = 0;
+                    for (int i = 0; i < row.length; i++) {
+                        dotProduct += row[i] * column[i];
+                    }
+                    output.set(x, y, dotProduct);
                 }
             }
             if (hasDeterminant() && other.hasDeterminant()) {
@@ -287,18 +295,6 @@ public class Matrix {
             return other.multiply(this);
         }
         return error("Width and height do not match.");
-    }
-
-    private boolean hasDeterminant() {
-        return determinant != null && !determinant.isNaN();
-    }
-
-    private double multiply(double[] row, double[] column) {
-        double result = 0;
-        for (int i = 0; i < row.length; i++) {
-            result += row[i] * column[i];
-        }
-        return result;
     }
 
     private boolean checkForMultiply(Matrix other) {
@@ -315,7 +311,7 @@ public class Matrix {
         if (includeValues) {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    m.set(this.get(x, y), x, y);
+                    m.set(x, y, this.get(x, y));
                 }
             }
         }
@@ -370,7 +366,7 @@ public class Matrix {
         for (int row = 0; row < width; row++) {
             for (int col = 0; col < width; col++) {
                 if (row != excludedX && col != excludedY) {
-                    minor.set(get(row, col), cofactorX++, cofactorY);
+                    minor.set(cofactorX++, cofactorY, get(row, col));
                     if (cofactorX == width - 1) {
                         cofactorX = 0;
                         cofactorY++;
@@ -411,14 +407,14 @@ public class Matrix {
         var result = copy(false);
         if (width == 2 && height == 2) {
             double a = get(0, 0);
-            result.set(a, 1, 1);
+            result.set(1, 1, a);
             double d = get(1, 1);
-            result.set(d, 0, 0);
+            result.set(0, 0, d);
 
             double b = get(1, 0);
-            result.set(b * -1, 1, 0);
+            result.set(1, 0, b * -1);
             double c = get(0, 1);
-            result.set(c * -1, 0, 1);
+            result.set(0, 1, c * -1);
             return result.multiply(1 / det);
         }
         return getAdjoint().multiply(1 / det).transpose();
@@ -433,7 +429,7 @@ public class Matrix {
                 int sign = (((y + x) & 1) == 0) ? 1 : -1;
                 // Interchanging rows and columns to get the
                 // transpose of the cofactor matrix
-                adjoint.set(sign * getCofactor(x, y), x, y);
+                adjoint.set(x, y, sign * getCofactor(x, y));
             }
         }
         return adjoint;
@@ -552,7 +548,7 @@ public class Matrix {
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++) {
                     double result = get(x, y) - value.get(x, y);
-                    res.set(result, x, y);
+                    res.set(x, y, result);
                 }
             return res;
         }
@@ -641,40 +637,51 @@ public class Matrix {
         Matrix l = Matrix.identityMatrix(n);
         Matrix u = copy(true);
         int[] pivots = new int[n];
+        for (int i = 0; i < n; i++) {
+            pivots[i] = i;
+        }
+        System.out.println("Initial pivots: " + Arrays.toString(pivots));
+
         int parity = 1;
 
-        for (int k = 0; k < n - 1; k++) {
-            int p = k;
-            for (int i = k + 1; i < n; i++) {
-                if (Math.abs(u.get(i, k)) > Math.abs(u.get(p, k))) {
-                    p = i;
+        for (int y = 0; y < n - 1; y++) {
+            int p = y;
+            for (int x = y + 1; x < n; x++) {
+                if (Math.abs(u.get(x, y)) > Math.abs(u.get(p, y))) {
+                    p = x;
                 }
             }
-
-            if (p != k) {
-                u.swapRows(p, k);
-                l.swapRows(p, k);
+            if (p != y) {
+                u.swapRows(p, y);
+                l.swapRows(p, y);
                 int temp = pivots[p];
-                pivots[p] = pivots[k];
-                pivots[k] = temp;
+                pivots[p] = pivots[y];
+                pivots[y] = temp;
                 parity = -parity;
+                System.out.println("New pivots: " + Arrays.toString(pivots));
             }
 
-            double pivot = u.get(k, k);
+            double pivot = u.get(y, y);
             if (pivot == 0) {
                 throw new IllegalArgumentException("Matrix is singular");
             }
 
-            for (int i = k + 1; i < n; i++) {
-                double factor = u.get(i, k) / pivot;
-                l.set(factor, i, k);
-                for (int j = k; j < n; j++) {
-                    u.set(u.get(i, j) - factor * u.get(k, j), i, j);
+            for (int x = y + 1; x < n; x++) {
+                double factor = u.get(x, y) / pivot;
+                l.set(x, y, factor);
+                for (int j = y; j < n; j++) {
+                    u.set(x, j, u.get(x, j) - factor * u.get(y, j));
                 }
             }
+            System.out.println("L:");
+            System.out.println(l);
+            System.out.println("U:");
+            System.out.println(u);
         }
 
         return new LUDecomposition(l, u, pivots, parity);
     }
+
+
 }
 
